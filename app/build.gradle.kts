@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.softklass.annette"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.softklass.annette"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.02"
 
