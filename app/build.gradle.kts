@@ -55,8 +55,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.runtime.v272)
+    implementation(libs.androidx.room.ktx.v272)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
