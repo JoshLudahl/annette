@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
 
+
     // ROOM
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.ui.text.google.fonts)
@@ -68,6 +69,11 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
+
+    // VICO CHARTS
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

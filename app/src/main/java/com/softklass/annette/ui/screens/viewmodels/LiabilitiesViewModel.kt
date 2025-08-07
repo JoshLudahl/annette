@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softklass.annette.data.database.dao.BalanceSheetDao
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
+import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,11 +21,18 @@ class LiabilitiesViewModel @Inject constructor(
     private val _liabilities = MutableStateFlow<List<BalanceSheetItemWithValue>>(emptyList())
     val liabilities: StateFlow<List<BalanceSheetItemWithValue>> = _liabilities.asStateFlow()
 
+    private val _historicalTotals = MutableStateFlow<List<HistoricalTotal>>(emptyList())
+    val historicalTotals: StateFlow<List<HistoricalTotal>> = _historicalTotals.asStateFlow()
+
+    private val _showChart = MutableStateFlow(false)
+    val showChart: StateFlow<Boolean> = _showChart.asStateFlow()
+
     private val _showAddDialog = MutableStateFlow(false)
     val showAddDialog: StateFlow<Boolean> = _showAddDialog.asStateFlow()
 
     init {
         loadLiabilities()
+        loadHistoricalTotals()
     }
 
     private fun loadLiabilities() {
@@ -33,6 +41,18 @@ class LiabilitiesViewModel @Inject constructor(
                 _liabilities.value = liabilityList
             }
         }
+    }
+
+    private fun loadHistoricalTotals() {
+        viewModelScope.launch {
+            balanceSheetDao.getLiabilitiesHistoricalTotals().collect { totals ->
+                _historicalTotals.value = totals
+            }
+        }
+    }
+
+    fun toggleChart() {
+        _showChart.value = !_showChart.value
     }
 
     fun showAddDialog() {
