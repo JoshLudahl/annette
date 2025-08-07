@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.entities.LiabilityEntity
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
@@ -37,7 +38,6 @@ fun LiabilitiesScreen(
 ) {
     val liabilities by viewModel.liabilities.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
-    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Column(
         modifier = modifier
@@ -66,7 +66,7 @@ fun LiabilitiesScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = currencyFormat.format(liabilities.sumOf { it.amount }),
+                    text = currencyFormatter.format(liabilities.sumOf { it.amount }),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onError
@@ -188,7 +188,7 @@ fun AddLiabilityDialog(
                 
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = { amount = it.replace(",", "") },
                     label = { Text("Amount") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),

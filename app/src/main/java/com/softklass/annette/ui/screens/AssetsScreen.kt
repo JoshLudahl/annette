@@ -6,24 +6,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.entities.AssetEntity
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
-import com.softklass.annette.ui.theme.AnnetteTheme
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -42,7 +40,6 @@ fun AssetsScreen(
 ) {
     val assets by viewModel.assets.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
-    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Column(
         modifier = modifier
@@ -71,7 +68,7 @@ fun AssetsScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = currencyFormat.format(assets.sumOf { it.amount }),
+                    text = currencyFormatter.format(assets.sumOf { it.amount }),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary

@@ -42,11 +42,8 @@ fun PieChart(
     size: androidx.compose.ui.unit.Dp = 200.dp,
 ) {
     val total = assets + liabilities
-    if (total <= 0) return
-
     val assetsPercentage = (assets / total).toFloat()
     val liabilitiesPercentage = (liabilities / total).toFloat()
-
     val assetsColor = MaterialTheme.colorScheme.primary
     val liabilitiesColor = MaterialTheme.colorScheme.error
 
@@ -112,7 +109,8 @@ fun NetWorthScreen(
                 totalAssets = totalAssets,
                 title = "Assets",
                 cardContainerColor = MaterialTheme.colorScheme.primary,
-                textColor = MaterialTheme.colorScheme.onPrimary
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.weight(1f),
             )
 
             // Liabilities Value Card
@@ -120,7 +118,8 @@ fun NetWorthScreen(
                 totalAssets = totalLiabilities,
                 title = "Liabilities",
                 cardContainerColor = MaterialTheme.colorScheme.error,
-                textColor = MaterialTheme.colorScheme.onError
+                textColor = MaterialTheme.colorScheme.onError,
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -248,25 +247,25 @@ fun ValueCard(
     totalAssets: Double,
     title: String,
     cardContainerColor: Color,
-    textColor: Color
+    textColor: Color,
+    modifier: Modifier
 ) {
     Card(
-        modifier = Modifier
-
+        modifier = modifier
             .padding(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = cardContainerColor
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = textColor
+                color = textColor,
             )
             Text(
                 text = currencyFormatter.format(totalAssets),
