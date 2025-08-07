@@ -2,8 +2,9 @@ package com.softklass.annette.ui.screens.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softklass.annette.data.database.dao.LiabilityDao
-import com.softklass.annette.data.database.entities.LiabilityEntity
+import com.softklass.annette.data.database.dao.BalanceSheetDao
+import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
+import com.softklass.annette.data.database.entities.BalanceSheetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LiabilitiesViewModel @Inject constructor(
-    private val liabilityDao: LiabilityDao
+    private val balanceSheetDao: BalanceSheetDao
 ) : ViewModel() {
 
-    private val _liabilities = MutableStateFlow<List<LiabilityEntity>>(emptyList())
-    val liabilities: StateFlow<List<LiabilityEntity>> = _liabilities.asStateFlow()
+    private val _liabilities = MutableStateFlow<List<BalanceSheetItemWithValue>>(emptyList())
+    val liabilities: StateFlow<List<BalanceSheetItemWithValue>> = _liabilities.asStateFlow()
 
     private val _showAddDialog = MutableStateFlow(false)
     val showAddDialog: StateFlow<Boolean> = _showAddDialog.asStateFlow()
@@ -28,7 +29,7 @@ class LiabilitiesViewModel @Inject constructor(
 
     private fun loadLiabilities() {
         viewModelScope.launch {
-            liabilityDao.getAllLiabilities().collect { liabilityList ->
+            balanceSheetDao.getLiabilitiesWithLatestValues().collect { liabilityList ->
                 _liabilities.value = liabilityList
             }
         }
@@ -44,19 +45,25 @@ class LiabilitiesViewModel @Inject constructor(
 
     fun addLiability(name: String, amount: Double, category: String) {
         viewModelScope.launch {
-            val liability = LiabilityEntity(
+            val liability = BalanceSheetItem(
                 name = name,
-                amount = amount,
-                category = category
+                category = category,
+                type = "liability"
             )
-            liabilityDao.insertLiability(liability)
+            balanceSheetDao.insertBalanceSheetItemWithValue(liability, amount)
             hideAddDialog()
         }
     }
 
-    fun deleteLiability(liability: LiabilityEntity) {
+    fun deleteLiability(liability: BalanceSheetItemWithValue) {
         viewModelScope.launch {
-            liabilityDao.deleteLiability(liability)
+            val balanceSheetItem = BalanceSheetItem(
+                id = liability.id,
+                name = liability.name,
+                category = liability.category,
+                type = liability.type
+            )
+            balanceSheetDao.deleteBalanceSheetItemWithValues(balanceSheetItem)
         }
     }
 }

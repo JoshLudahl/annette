@@ -2,8 +2,9 @@ package com.softklass.annette.ui.screens.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softklass.annette.data.database.dao.AssetDao
-import com.softklass.annette.data.database.entities.AssetEntity
+import com.softklass.annette.data.database.dao.BalanceSheetDao
+import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
+import com.softklass.annette.data.database.entities.BalanceSheetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AssetsViewModel @Inject constructor(
-    private val assetDao: AssetDao
+    private val balanceSheetDao: BalanceSheetDao
 ) : ViewModel() {
 
-    private val _assets = MutableStateFlow<List<AssetEntity>>(emptyList())
-    val assets: StateFlow<List<AssetEntity>> = _assets.asStateFlow()
+    private val _assets = MutableStateFlow<List<BalanceSheetItemWithValue>>(emptyList())
+    val assets: StateFlow<List<BalanceSheetItemWithValue>> = _assets.asStateFlow()
 
     private val _showAddDialog = MutableStateFlow(false)
     val showAddDialog: StateFlow<Boolean> = _showAddDialog.asStateFlow()
@@ -28,7 +29,7 @@ class AssetsViewModel @Inject constructor(
 
     private fun loadAssets() {
         viewModelScope.launch {
-            assetDao.getAllAssets().collect { assetList ->
+            balanceSheetDao.getAssetsWithLatestValues().collect { assetList ->
                 _assets.value = assetList
             }
         }
@@ -44,19 +45,25 @@ class AssetsViewModel @Inject constructor(
 
     fun addAsset(name: String, amount: Double, category: String) {
         viewModelScope.launch {
-            val asset = AssetEntity(
+            val asset = BalanceSheetItem(
                 name = name,
-                amount = amount,
-                category = category
+                category = category,
+                type = "asset"
             )
-            assetDao.insertAsset(asset)
+            balanceSheetDao.insertBalanceSheetItemWithValue(asset, amount)
             hideAddDialog()
         }
     }
 
-    fun deleteAsset(asset: AssetEntity) {
+    fun deleteAsset(asset: BalanceSheetItemWithValue) {
         viewModelScope.launch {
-            assetDao.deleteAsset(asset)
+            val balanceSheetItem = BalanceSheetItem(
+                id = asset.id,
+                name = asset.name,
+                category = asset.category,
+                type = asset.type
+            )
+            balanceSheetDao.deleteBalanceSheetItemWithValues(balanceSheetItem)
         }
     }
 }

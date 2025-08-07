@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.softklass.annette.currencyFormatter
-import com.softklass.annette.data.database.entities.AssetEntity
+import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
 import java.text.NumberFormat
 import java.util.Locale
@@ -68,7 +68,7 @@ fun AssetsScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = currencyFormatter.format(assets.sumOf { it.amount }),
+                    text = currencyFormatter.format(assets.sumOf { it.value ?: 0.0 }),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -206,7 +206,7 @@ fun AssetItem(asset: Asset) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetEntityItem(asset: AssetEntity) {
+fun AssetEntityItem(asset: BalanceSheetItemWithValue) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     // Map category to icon
@@ -254,7 +254,7 @@ fun AssetEntityItem(asset: AssetEntity) {
             }
 
             Text(
-                text = currencyFormat.format(asset.amount),
+                text = currencyFormat.format(asset.value ?: 0.0),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

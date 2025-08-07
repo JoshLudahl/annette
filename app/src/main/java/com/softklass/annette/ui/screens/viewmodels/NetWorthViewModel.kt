@@ -2,8 +2,7 @@ package com.softklass.annette.ui.screens.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softklass.annette.data.database.dao.AssetDao
-import com.softklass.annette.data.database.dao.LiabilityDao
+import com.softklass.annette.data.database.dao.BalanceSheetDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NetWorthViewModel @Inject constructor(
-    private val assetDao: AssetDao,
-    private val liabilityDao: LiabilityDao
+    private val balanceSheetDao: BalanceSheetDao
 ) : ViewModel() {
 
     private val _totalAssets = MutableStateFlow(0.0)
@@ -35,16 +33,16 @@ class NetWorthViewModel @Inject constructor(
 
     private fun loadTotalAssets() {
         viewModelScope.launch {
-            assetDao.getAllAssets().collect { assets ->
-                _totalAssets.value = assets.sumOf { it.amount }
+            balanceSheetDao.getAssetsWithLatestValues().collect { assets ->
+                _totalAssets.value = assets.sumOf { it.value ?: 0.0 }
             }
         }
     }
     
     private fun loadTotalLiabilities() {
         viewModelScope.launch {
-            liabilityDao.getAllLiabilities().collect { liabilities ->
-                _totalLiabilities.value = liabilities.sumOf { it.amount }
+            balanceSheetDao.getLiabilitiesWithLatestValues().collect { liabilities ->
+                _totalLiabilities.value = liabilities.sumOf { it.value ?: 0.0 }
             }
         }
     }
