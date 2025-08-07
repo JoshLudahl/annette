@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.ui.theme.AnnetteTheme
@@ -26,7 +27,10 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -64,7 +68,7 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
             Card(
                 modifier = Modifier.weight(1f).padding(4.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Column(
@@ -75,13 +79,13 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
                         text = "Assets",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
                         text = "$0.00",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -89,7 +93,7 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
             Card(
                 modifier = Modifier.weight(1f).padding(4.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    containerColor = MaterialTheme.colorScheme.error
                 )
             ) {
                 Column(
@@ -100,13 +104,13 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
                         text = "Liabilities",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                        color = MaterialTheme.colorScheme.onError
                     )
                     Text(
                         text = "$0.00",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                        color = MaterialTheme.colorScheme.onError
                     )
                 }
             }
@@ -114,7 +118,7 @@ fun NetWorthScreen(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 fun NetWorthScreenPreview() {
     AnnetteTheme {
