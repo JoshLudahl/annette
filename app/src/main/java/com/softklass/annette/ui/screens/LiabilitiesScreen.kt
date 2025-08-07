@@ -13,43 +13,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
+import com.softklass.annette.data.model.BalanceSheetType
+import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
+import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
 import java.text.NumberFormat
@@ -121,7 +110,7 @@ fun LiabilitiesScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    
+
                     if (historicalTotals.isEmpty()) {
                         Box(
                             modifier = Modifier
@@ -135,43 +124,9 @@ fun LiabilitiesScreen(
                             )
                         }
                     } else {
-                        val modelProducer = remember { CartesianChartModelProducer() }
 
-                        LaunchedEffect(historicalTotals) {
-                            if (historicalTotals.isNotEmpty()) {
-                                modelProducer.runTransaction {
-                                    lineSeries {
-                                        series(
-                                            x = historicalTotals.indices.map { it.toFloat() },
-                                            y = historicalTotals.map { it.totalValue.toFloat() }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        
-                        val chart = rememberCartesianChart()
-                        
-                        CartesianChartHost(
-                            chart = chart,
-                            modelProducer = modelProducer,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(16.dp)
-                        )
-                        
-                        // Show current total if data is available
-                        if (historicalTotals.isNotEmpty()) {
-                            val currentTotal = historicalTotals.lastOrNull()?.totalValue ?: 0.0
-                            Text(
-                                text = "Current Total: ${currencyFormatter.format(currentTotal)}",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
+                        HistoricalChart(historicalTotals = historicalTotals)
+
                     }
                 }
             }
@@ -259,98 +214,28 @@ fun LiabilitiesScreen(
                     LiabilityItem(
                         liability = liability,
                         onClick = {
-                            onNavigateToDetail(liability.id, liability.name, liability.category, liability.type)
+                            onNavigateToDetail(
+                                liability.id,
+                                liability.name,
+                                liability.category,
+                                liability.type
+                            )
                         }
                     )
                 }
             }
         }
     }
-    
+
     // Add Liability Dialog
     if (showAddDialog) {
-        AddLiabilityDialog(
+        AddBalanceSheetItemDialog(
             onDismiss = { viewModel.hideAddDialog() },
-            onAddLiability = { name: String, amount: Double, category: String ->
+            onAddItem = { name: String, amount: Double, category: String ->
                 viewModel.addLiability(name, amount, category)
-            }
+            },
+            type = BalanceSheetType.LIABILITIES
         )
-    }
-}
-
-@Composable
-fun AddLiabilityDialog(
-    onDismiss: () -> Unit,
-    onAddLiability: (String, Double, String) -> Unit
-) {
-    var name by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    
-    Dialog(onDismissRequest = onDismiss) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Add Liability",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Liability Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it.replace(",", "") },
-                    label = { Text("Amount") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true
-                )
-                
-                OutlinedTextField(
-                    value = category,
-                    onValueChange = { category = it },
-                    label = { Text("Category") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Cancel")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = {
-                            val amountDouble = amount.toDoubleOrNull()
-                            if (name.isNotBlank() && amountDouble != null && amountDouble > 0 && category.isNotBlank()) {
-                                onAddLiability(name.trim(), amountDouble, category.trim())
-                            }
-                        }
-                    ) {
-                        Text("Add")
-                    }
-                }
-            }
-        }
     }
 }
 
