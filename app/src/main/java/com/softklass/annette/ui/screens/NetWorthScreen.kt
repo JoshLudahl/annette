@@ -86,7 +86,21 @@ fun NetWorthScreen(
     val totalLiabilities by viewModel.totalLiabilities.collectAsState()
     val netWorth by viewModel.netWorth.collectAsState()
 
+    NetWorthScreenContent(
+        netWorth = netWorth,
+        totalAssets = totalAssets,
+        totalLiabilities = totalLiabilities,
+        modifier = modifier
+    )
+}
 
+@Composable
+fun NetWorthScreenContent(
+    netWorth: Double,
+    totalAssets: Double,
+    totalLiabilities: Double,
+    modifier: Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -100,28 +114,7 @@ fun NetWorthScreen(
 
         DisplayPieChart(totalAssets = totalAssets, totalLiabilities = totalLiabilities)
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // Asset Value Card
-            ValueCard(
-                totalAssets = totalAssets,
-                title = "Assets",
-                cardContainerColor = MaterialTheme.colorScheme.primary,
-                textColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.weight(1f),
-            )
-
-            // Liabilities Value Card
-            ValueCard(
-                totalAssets = totalLiabilities,
-                title = "Liabilities",
-                cardContainerColor = MaterialTheme.colorScheme.error,
-                textColor = MaterialTheme.colorScheme.onError,
-                modifier = Modifier.weight(1f),
-            )
-        }
+        DisplayValueCards(totalAssets = totalAssets, totalLiabilities = totalLiabilities)
     }
 }
 
@@ -243,6 +236,35 @@ fun DisplayPieChart(
 }
 
 @Composable
+fun DisplayValueCards(
+    totalAssets: Double,
+    totalLiabilities: Double
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        // Asset Value Card
+        ValueCard(
+            totalAssets = totalAssets,
+            title = "Assets",
+            cardContainerColor = MaterialTheme.colorScheme.primary,
+            textColor = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.weight(1f),
+        )
+
+        // Liabilities Value Card
+        ValueCard(
+            totalAssets = totalLiabilities,
+            title = "Liabilities",
+            cardContainerColor = MaterialTheme.colorScheme.error,
+            textColor = MaterialTheme.colorScheme.onError,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
 fun ValueCard(
     totalAssets: Double,
     title: String,
@@ -258,7 +280,9 @@ fun ValueCard(
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
