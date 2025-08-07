@@ -5,10 +5,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.MonetizationOn
+import androidx.compose.material.icons.rounded.ShowChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,7 +39,8 @@ data class Asset(
 @Composable
 fun AssetsScreen(
     viewModel: AssetsViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToDetail: (Long, String, String, String) -> Unit = { _, _, _, _ -> }
 ) {
     val assets by viewModel.assets.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
@@ -136,7 +140,12 @@ fun AssetsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(assets) { asset ->
-                    AssetEntityItem(asset = asset)
+                    AssetEntityItem(
+                        asset = asset,
+                        onClick = { 
+                            onNavigateToDetail(asset.id, asset.name, asset.category, asset.type)
+                        }
+                    )
                 }
             }
         }
@@ -206,21 +215,24 @@ fun AssetItem(asset: Asset) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetEntityItem(asset: BalanceSheetItemWithValue) {
+fun AssetEntityItem(
+    asset: BalanceSheetItemWithValue,
+    onClick: () -> Unit = {}
+) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     // Map category to icon
     val icon = when (asset.category.lowercase()) {
-        "real estate", "property" -> Icons.Default.Home
-        "cash", "savings" -> Icons.Default.Star
-        "investments", "stocks" -> Icons.Default.Favorite
+        "real estate", "property", "mortgage", "home" -> Icons.Default.Home
+        "cash", "savings", "money" -> Icons.Rounded.MonetizationOn
+        "investments", "stocks", "crypto" -> Icons.AutoMirrored.Rounded.ShowChart
         else -> Icons.Default.Star
     }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = { /* TODO: Edit asset */ }
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier

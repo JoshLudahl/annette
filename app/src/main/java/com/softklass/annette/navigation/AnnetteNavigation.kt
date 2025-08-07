@@ -24,11 +24,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import com.softklass.annette.ui.screens.AssetsScreen
+import com.softklass.annette.ui.screens.ItemDetailScreen
 import com.softklass.annette.ui.screens.LiabilitiesScreen
 import com.softklass.annette.ui.screens.NetWorthScreen
 import com.softklass.annette.ui.screens.SettingsScreen
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
+import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
@@ -36,6 +40,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Liabilities : Screen("liabilities", "Liabilities", Icons.Rounded.AddCard)
     object Assets : Screen("assets", "Assets", Icons.Rounded.Savings)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+    object ItemDetail : Screen("item_detail/{itemId}/{itemName}/{itemCategory}/{itemType}", "Item Detail", Icons.Default.Home)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,14 +122,47 @@ fun AnnetteNavHost(
             NetWorthScreen(viewModel = hiltViewModel<NetWorthViewModel>())
         }
         composable(Screen.Liabilities.route) {
-            LiabilitiesScreen()
+            LiabilitiesScreen(
+                onNavigateToDetail = { itemId, itemName, itemCategory, itemType ->
+                    navController.navigate("item_detail/$itemId/$itemName/$itemCategory/$itemType")
+                }
+            )
         }
         composable(Screen.Assets.route) {
-            AssetsScreen(viewModel = hiltViewModel<AssetsViewModel>())
+            AssetsScreen(
+                viewModel = hiltViewModel<AssetsViewModel>(),
+                onNavigateToDetail = { itemId, itemName, itemCategory, itemType ->
+                    navController.navigate("item_detail/$itemId/$itemName/$itemCategory/$itemType")
+                }
+            )
         }
 
         composable(Screen.Settings.route) {
             SettingsScreen()
+        }
+
+        composable(
+            route = Screen.ItemDetail.route,
+            arguments = listOf(
+                navArgument("itemId") { type = NavType.LongType },
+                navArgument("itemName") { type = NavType.StringType },
+                navArgument("itemCategory") { type = NavType.StringType },
+                navArgument("itemType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getLong("itemId") ?: 0L
+            val itemName = backStackEntry.arguments?.getString("itemName") ?: ""
+            val itemCategory = backStackEntry.arguments?.getString("itemCategory") ?: ""
+            val itemType = backStackEntry.arguments?.getString("itemType") ?: ""
+            
+            ItemDetailScreen(
+                itemId = itemId,
+                itemName = itemName,
+                itemCategory = itemCategory,
+                itemType = itemType,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = hiltViewModel<ItemDetailViewModel>()
+            )
         }
     }
 }

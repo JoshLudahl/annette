@@ -30,6 +30,9 @@ interface BalanceSheetDao {
     @Delete
     suspend fun deleteBalanceSheetItem(item: BalanceSheetItem)
 
+    @Delete
+    suspend fun deleteBalanceSheetValue(value: BalanceSheetValues)
+
     @Query("DELETE FROM balance_sheet_values WHERE parentId = :itemId")
     suspend fun deleteBalanceSheetValues(itemId: Long)
 

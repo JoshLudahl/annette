@@ -53,7 +53,8 @@ import java.util.Locale
 @Composable
 fun LiabilitiesScreen(
     modifier: Modifier = Modifier,
-    viewModel: LiabilitiesViewModel = hiltViewModel()
+    viewModel: LiabilitiesViewModel = hiltViewModel(),
+    onNavigateToDetail: (Long, String, String, String) -> Unit = { _, _, _, _ -> }
 ) {
     val liabilities by viewModel.liabilities.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
@@ -153,7 +154,12 @@ fun LiabilitiesScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(liabilities) { liability ->
-                    LiabilityItem(liability = liability)
+                    LiabilityItem(
+                        liability = liability,
+                        onClick = {
+                            onNavigateToDetail(liability.id, liability.name, liability.category, liability.type)
+                        }
+                    )
                 }
             }
         }
@@ -248,13 +254,16 @@ fun AddLiabilityDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiabilityItem(liability: BalanceSheetItemWithValue) {
+fun LiabilityItem(
+    liability: BalanceSheetItemWithValue,
+    onClick: () -> Unit = {}
+) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = { /* TODO: Edit liability */ }
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
