@@ -54,6 +54,7 @@ fun PieChart(
         val radius = canvasSize / 2f
         val center = Offset(this.size.width / 2f, this.size.height / 2f)
 
+
         // Draw liabilities slice
         drawArc(
             color = liabilitiesColor,
@@ -61,7 +62,7 @@ fun PieChart(
             sweepAngle = liabilitiesPercentage * 360f,
             useCenter = true,
             topLeft = Offset(center.x - radius, center.y - radius),
-            size = Size(canvasSize, canvasSize)
+            size = Size(canvasSize, canvasSize),
         )
 
         // Draw assets slice
