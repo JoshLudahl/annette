@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.rounded.ShowChart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.softklass.annette.currencyFormatter
-import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.softklass.annette.currencyFormatter
+import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
 import java.text.NumberFormat
@@ -137,7 +136,7 @@ fun LiabilitiesScreen(
                         }
                     } else {
                         val modelProducer = remember { CartesianChartModelProducer() }
-                        
+
                         LaunchedEffect(historicalTotals) {
                             if (historicalTotals.isNotEmpty()) {
                                 modelProducer.runTransaction {
