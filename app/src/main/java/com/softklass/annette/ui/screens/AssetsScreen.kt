@@ -56,7 +56,7 @@ fun AssetsScreen(
                 .padding(bottom = 16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
             Column(
@@ -67,14 +67,14 @@ fun AssetsScreen(
                     text = "Total Assets",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = currencyFormat.format(assets.sumOf { it.amount }),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

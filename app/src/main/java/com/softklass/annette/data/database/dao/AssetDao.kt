@@ -23,4 +23,7 @@ interface AssetDao {
 
     @Query("DELETE FROM assets WHERE id = :id")
     suspend fun deleteAssetById(id: Long)
+
+    @Query("SELECT COALESCE(SUM(amount), 0.0) FROM assets")
+    fun getTotalAssetsValue(): Flow<Double>
 }

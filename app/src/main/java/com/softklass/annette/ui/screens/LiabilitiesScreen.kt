@@ -3,40 +3,40 @@ package com.softklass.annette.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.softklass.annette.data.database.entities.LiabilityEntity
+import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
 import java.text.NumberFormat
 import java.util.Locale
 
-data class Liability(
-    val name: String,
-    val amount: Double,
-    val type: String,
-    val icon: ImageVector
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiabilitiesScreen(modifier: Modifier = Modifier) {
-    val sampleLiabilities = listOf(
-        Liability("Mortgage", 250000.0, "Real Estate", Icons.Default.Home),
-        Liability("Car Loan", 15000.0, "Vehicle", Icons.Default.Star),
-        Liability("Credit Card", 2500.0, "Credit", Icons.Default.Info)
-    )
-
+fun LiabilitiesScreen(
+    modifier: Modifier = Modifier,
+    viewModel: LiabilitiesViewModel = hiltViewModel()
+) {
+    val liabilities by viewModel.liabilities.collectAsState()
+    val showAddDialog by viewModel.showAddDialog.collectAsState()
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Column(
@@ -51,7 +51,7 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
                 .padding(bottom = 16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
+                containerColor = MaterialTheme.colorScheme.error
             )
         ) {
             Column(
@@ -62,14 +62,14 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
                     text = "Total Liabilities",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = MaterialTheme.colorScheme.onError
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = currencyFormat.format(sampleLiabilities.sumOf { it.amount }),
+                    text = currencyFormat.format(liabilities.sumOf { it.amount }),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = MaterialTheme.colorScheme.onError
                 )
             }
         }
@@ -90,7 +90,7 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
             )
 
             FloatingActionButton(
-                onClick = { /* TODO: Add liability */ },
+                onClick = { viewModel.showAddDialog() },
                 modifier = Modifier.size(48.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
@@ -103,7 +103,7 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
         }
 
         // Liabilities List
-        if (sampleLiabilities.isEmpty()) {
+        if (liabilities.isEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -133,8 +133,94 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(sampleLiabilities) { liability ->
+                items(liabilities) { liability ->
                     LiabilityItem(liability = liability)
+                }
+            }
+        }
+    }
+    
+    // Add Liability Dialog
+    if (showAddDialog) {
+        AddLiabilityDialog(
+            onDismiss = { viewModel.hideAddDialog() },
+            onAddLiability = { name: String, amount: Double, category: String ->
+                viewModel.addLiability(name, amount, category)
+            }
+        )
+    }
+}
+
+@Composable
+fun AddLiabilityDialog(
+    onDismiss: () -> Unit,
+    onAddLiability: (String, Double, String) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Add Liability",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Liability Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text("Amount") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true
+                )
+                
+                OutlinedTextField(
+                    value = category,
+                    onValueChange = { category = it },
+                    label = { Text("Category") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            val amountDouble = amount.toDoubleOrNull()
+                            if (name.isNotBlank() && amountDouble != null && amountDouble > 0 && category.isNotBlank()) {
+                                onAddLiability(name.trim(), amountDouble, category.trim())
+                            }
+                        }
+                    ) {
+                        Text("Add")
+                    }
                 }
             }
         }
@@ -143,7 +229,7 @@ fun LiabilitiesScreen(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiabilityItem(liability: Liability) {
+fun LiabilityItem(liability: LiabilityEntity) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Card(
@@ -158,7 +244,7 @@ fun LiabilityItem(liability: Liability) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = liability.icon,
+                imageVector = Icons.Default.Info,
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -176,7 +262,7 @@ fun LiabilityItem(liability: Liability) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = liability.type,
+                    text = liability.category,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
