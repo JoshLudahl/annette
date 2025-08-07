@@ -42,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -427,10 +429,15 @@ fun AddAssetDialog(
 
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { name = it.trim() },
                     label = { Text("Asset Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions =
+                        KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                            capitalization = KeyboardCapitalization.Sentences,
+                        ),
                 )
 
                 OutlinedTextField(
@@ -438,17 +445,25 @@ fun AddAssetDialog(
                     onValueChange = { amount = it },
                     label = { Text("Amount") },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next,
+                    ),
                     singleLine = true
                 )
 
                 OutlinedTextField(
                     value = category,
-                    onValueChange = { category = it },
+                    onValueChange = { category = it.trim() },
                     label = { Text("Category") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    placeholder = { Text("e.g., Real Estate, Cash, Investments") }
+                    placeholder = { Text("e.g., Real Estate, Cash, Investments") },
+                            keyboardOptions =
+                            KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                    capitalization = KeyboardCapitalization.Sentences,
+                ),
                 )
 
                 Row(
