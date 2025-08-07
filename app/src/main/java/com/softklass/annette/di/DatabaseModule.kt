@@ -31,4 +31,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providesLiabilityDao(database: AnnetteDatabase) = database.liabilityDao()
+
+    @Singleton
+    @Provides
+    fun providesBalanceSheetDao(database: AnnetteDatabase) = database.balanceSheetDao()
 }
