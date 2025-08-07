@@ -29,6 +29,7 @@ import com.softklass.annette.ui.screens.LiabilitiesScreen
 import com.softklass.annette.ui.screens.NetWorthScreen
 import com.softklass.annette.ui.screens.SettingsScreen
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
+import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object NetWorth : Screen("net_worth", "Net Worth", Icons.Default.Home)
@@ -113,7 +114,7 @@ fun AnnetteNavHost(
         modifier = modifier
     ) {
         composable(Screen.NetWorth.route) {
-            NetWorthScreen()
+            NetWorthScreen(viewModel = hiltViewModel<NetWorthViewModel>())
         }
         composable(Screen.Liabilities.route) {
             LiabilitiesScreen()

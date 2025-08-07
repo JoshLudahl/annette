@@ -1,9 +1,21 @@
 package com.softklass.annette.ui.screens
 
-import android.R.attr.textColor
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,25 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.softklass.annette.currencyFormatter
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
-import java.text.NumberFormat
-import java.util.Locale
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun PieChart(
@@ -41,13 +43,13 @@ fun PieChart(
 ) {
     val total = assets + liabilities
     if (total <= 0) return
-    
+
     val assetsPercentage = (assets / total).toFloat()
     val liabilitiesPercentage = (liabilities / total).toFloat()
-    
+
     val assetsColor = MaterialTheme.colorScheme.primary
     val liabilitiesColor = MaterialTheme.colorScheme.error
-    
+
     Canvas(
         modifier = modifier.size(size)
     ) {
@@ -81,12 +83,13 @@ fun PieChart(
 @Composable
 fun NetWorthScreen(
     modifier: Modifier = Modifier,
-    viewModel: NetWorthViewModel = hiltViewModel()
+    viewModel: NetWorthViewModel
 ) {
     val totalAssets by viewModel.totalAssets.collectAsState()
     val totalLiabilities by viewModel.totalLiabilities.collectAsState()
     val netWorth by viewModel.netWorth.collectAsState()
-    val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US)
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -94,170 +97,204 @@ fun NetWorthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Net Worth",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = currencyFormatter.format(netWorth),
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Total Assets - Total Liabilities",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Pie Chart Section
-        if (totalAssets > 0 || totalLiabilities > 0) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Assets vs Liabilities",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    PieChart(
-                        assets = totalAssets,
-                        liabilities = totalLiabilities,
-                        size = 160.dp,
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Legend
-                    val primaryColor = MaterialTheme.colorScheme.primary
-                    val errorColor = MaterialTheme.colorScheme.error
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Canvas(modifier = Modifier.size(12.dp)) {
-                                drawCircle(color = errorColor)
-                            }
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Liabilities",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+        NetWorthCardTitle(netWorth = netWorth)
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Canvas(modifier = Modifier.size(12.dp)) {
-                                drawCircle(color = primaryColor)
-                            }
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Assets",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-        
+        Spacer(modifier = Modifier.height(24.dp))
+
+        DisplayPieChart(totalAssets = totalAssets, totalLiabilities = totalLiabilities)
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            // Asset Value Card
+            ValueCard(
+                totalAssets = totalAssets,
+                title = "Assets",
+                cardContainerColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.onPrimary
+            )
+
+            // Liabilities Value Card
+            ValueCard(
+                totalAssets = totalLiabilities,
+                title = "Liabilities",
+                cardContainerColor = MaterialTheme.colorScheme.error,
+                textColor = MaterialTheme.colorScheme.onError
+            )
+        }
+    }
+}
+
+@Composable
+fun NetWorthCardTitle(
+    netWorth: Double
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(24.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Net Worth",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = currencyFormatter.format(netWorth),
+                fontSize = 36.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Assets - Liabilities",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun DisplayPieChart(
+    totalAssets: Double,
+    totalLiabilities: Double
+) {
+    // Pie Chart Section
+    if (totalAssets > 0 || totalLiabilities > 0) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Assets",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Text(
-                        text = currencyFormatter.format(totalAssets),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-            
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.error
+                Text(
+                    text = "Assets vs Liabilities",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Spacer(modifier = Modifier.height(16.dp))
+
+                PieChart(
+                    assets = totalAssets,
+                    liabilities = totalLiabilities,
+                    size = 160.dp,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Legend
+                val primaryColor = MaterialTheme.colorScheme.primary
+                val errorColor = MaterialTheme.colorScheme.error
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Liabilities",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onError
-                    )
-                    Text(
-                        text = currencyFormatter.format(totalLiabilities),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onError
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(12.dp)) {
+                            drawCircle(color = errorColor)
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Liabilities",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(12.dp)) {
+                            drawCircle(color = primaryColor)
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Assets",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+fun ValueCard(
+    totalAssets: Double,
+    title: String,
+    cardContainerColor: Color,
+    textColor: Color
+) {
+    Card(
+        modifier = Modifier
+
+            .padding(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardContainerColor
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = textColor
+            )
+            Text(
+                text = currencyFormatter.format(totalAssets),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = textColor
+            )
+        }
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+fun DisplayPieChartPreview() {
+    AnnetteTheme {
+        DisplayPieChart(
+            totalAssets = 1000.00,
+            totalLiabilities = 500.00
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun NetWorthCardTitlePreview() {
+    AnnetteTheme {
+        NetWorthCardTitle(23.00)
     }
 }
 
@@ -265,6 +302,6 @@ fun NetWorthScreen(
 @Composable
 fun NetWorthScreenPreview() {
     AnnetteTheme {
-        NetWorthScreen()
+        NetWorthScreen(viewModel = hiltViewModel())
     }
 }
