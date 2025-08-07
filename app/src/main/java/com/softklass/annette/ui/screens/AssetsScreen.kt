@@ -34,10 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
+import com.softklass.annette.ui.components.BalanceSheetHeaderCard
 import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
 import java.text.NumberFormat
@@ -60,35 +60,12 @@ fun AssetsScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Total Assets",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = currencyFormatter.format(assets.sumOf { it.value ?: 0.0 }),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
+
+        BalanceSheetHeaderCard(
+            items = assets,
+            type = BalanceSheetType.ASSETS,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
         // Chart Section
         if (showChart) {

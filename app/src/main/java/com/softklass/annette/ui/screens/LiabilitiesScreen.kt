@@ -34,10 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
+import com.softklass.annette.ui.components.BalanceSheetHeaderCard
 import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.theme.AnnetteTheme
@@ -62,35 +62,10 @@ fun LiabilitiesScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.error
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Total Liabilities",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onError
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = currencyFormatter.format(liabilities.sumOf { it.value ?: 0.0 }),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onError
-                )
-            }
-        }
+        BalanceSheetHeaderCard(
+            items = liabilities,
+            type = BalanceSheetType.LIABILITIES
+        )
 
         // Chart Section
         if (showChart) {
