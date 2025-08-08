@@ -58,7 +58,7 @@ dependencies {
 
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
-
+    implementation(libs.androidx.material3.android)
 
     // ROOM
     implementation(libs.androidx.room.runtime)
