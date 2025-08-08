@@ -10,7 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.rounded.AccountBalance
+import androidx.compose.material.icons.rounded.AttachMoney
+import androidx.compose.material.icons.rounded.CreditCard
+import androidx.compose.material.icons.rounded.DirectionsBus
+import androidx.compose.material.icons.rounded.Flight
+import androidx.compose.material.icons.rounded.FoodBank
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.LocalHospital
+import androidx.compose.material.icons.rounded.Money
+import androidx.compose.material.icons.rounded.Movie
+import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.School
+import androidx.compose.material.icons.rounded.ShoppingCart
+import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,7 +140,7 @@ fun BalanceSheetItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Info,
+                imageVector = resolveIconForCategory(item.category),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -153,5 +171,26 @@ fun BalanceSheetItemCard(
                 color = MaterialTheme.colorScheme.error
             )
         }
+    }
+}
+
+private fun resolveIconForCategory(category: String): ImageVector {
+    return when (category.lowercase()) {
+        "food", "restaurant", "dining" -> Icons.Rounded.Restaurant
+        "transport", "transportation" -> Icons.Rounded.DirectionsBus
+        "entertainment", "movies", "cinema", "streaming" -> Icons.Rounded.Movie
+        "shopping", "retail", "clothing" -> Icons.Rounded.ShoppingCart
+        "utilities", "internet", "electricity", "water", "real estate", "house", "home" -> Icons.Rounded.Home
+        "health", "medical", "pharmacy", "doctor" -> Icons.Rounded.LocalHospital
+        "education", "books", "school", "university" -> Icons.Rounded.School
+        "travel", "vacation", "hotel", "airplane", "tourism" -> Icons.Rounded.Flight
+        "groceries", "supermarket", "market", "farmers market" -> Icons.Rounded.FoodBank
+        "credit card" -> Icons.Rounded.CreditCard
+        "loan" -> Icons.Rounded.AttachMoney
+        "cash" -> Icons.Rounded.Money
+        "investments", "retirement" -> Icons.AutoMirrored.Rounded.TrendingUp
+        "property", "assets" -> Icons.Rounded.AccountBalance
+
+        else -> Icons.Rounded.Info
     }
 }

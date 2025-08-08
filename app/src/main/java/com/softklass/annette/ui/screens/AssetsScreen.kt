@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ShowChart
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -123,7 +123,7 @@ fun AssetsScreen(
                     containerColor = if (showChart) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Icon(
-                        Icons.AutoMirrored.Rounded.ShowChart,
+                        Icons.AutoMirrored.Rounded.TrendingUp,
                         contentDescription = if (showChart) "Hide Chart" else "Show Chart",
                         tint = if (showChart) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -136,7 +136,7 @@ fun AssetsScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
-                        Icons.Default.Add,
+                        Icons.Rounded.Add,
                         contentDescription = "Add Asset",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
