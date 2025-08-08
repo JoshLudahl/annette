@@ -153,13 +153,16 @@ fun ItemDetailScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
+            // Sort values by date ascending so we can calculate percent change
+            val sortedValues = historicalValues.sortedBy { it.date }.reversed()
+
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(historicalValues) { value ->
+                items(sortedValues) { item ->
                     HistoricalValueItem(
-                        value = value,
-                        onLongClick = { viewModel.showDeleteDialog(value) }
+                        value = item,
+                        onLongClick = { viewModel.showDeleteDialog(item) }
                     )
                 }
             }
@@ -267,22 +270,27 @@ fun HistoricalValueItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = currencyFormat.format(value.value),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = dateFormat.format(Date(value.date)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            // Date (left)
+            Text(
+                text = dateFormat.format(Date(value.date)),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.weight(1f)) // Fill empty space if no percent
+
+            // Value (right)
+            Text(
+                text = currencyFormat.format(value.value),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f),
+                textAlign = androidx.compose.ui.text.style.TextAlign.End
+            )
         }
     }
 }
@@ -356,7 +364,13 @@ fun DeleteValueDialog(
         onDismissRequest = onDismiss,
         title = { Text("Delete Value") },
         text = {
-            Text("Are you sure you want to delete the value ${currencyFormat.format(value.value)} from ${dateFormat.format(Date(value.date))}?")
+            Text(
+                "Are you sure you want to delete the value ${currencyFormat.format(value.value)} from ${
+                    dateFormat.format(
+                        Date(value.date)
+                    )
+                }?"
+            )
         },
         confirmButton = {
             Button(
