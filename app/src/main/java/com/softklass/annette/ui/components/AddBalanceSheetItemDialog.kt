@@ -91,7 +91,7 @@ fun AddBalanceSheetItemDialog(
 
                 OutlinedTextField(
                     value = category,
-                    onValueChange = { category = it.trimEnd().trimStart() },
+                    onValueChange = { category = it.trimStart() },
                     label = { Text("Category") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
