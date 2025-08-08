@@ -2,32 +2,61 @@ package com.softklass.annette.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.entities.BalanceSheetValues
 import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ItemDetailScreen(
     itemId: Long,
@@ -46,13 +75,28 @@ fun ItemDetailScreen(
         viewModel.loadItemDetails(itemId, itemName, itemCategory, itemType)
     }
 
+    var showEditDialog by remember { mutableStateOf(false) }
+    val itemForEdit = item
+    var editedName by remember { mutableStateOf(itemForEdit?.name ?: itemName) }
+    var editedCategory by remember { mutableStateOf(itemForEdit?.category ?: itemCategory) }
+
+    fun isValidInput(input: String): Boolean {
+        return input.isNotBlank() && input.all { it.isLetter() || it.isWhitespace() }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(itemName) },
+                title = { Text(item?.name ?: "Item Detail") },
+                subtitle = { Text(item?.category ?: "Category") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showEditDialog = true }) {
+                        Icon(Icons.Rounded.Edit, contentDescription = "Edit Item")
                     }
                 }
             )
@@ -61,7 +105,7 @@ fun ItemDetailScreen(
             FloatingActionButton(
                 onClick = { viewModel.showAddValueDialog() }
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Value")
+                Icon(Icons.Rounded.Add, contentDescription = "Add Value")
             }
         }
     ) { paddingValues ->
@@ -138,6 +182,67 @@ fun ItemDetailScreen(
             onConfirm = { viewModel.deleteValue(valueToDelete) }
         )
     }
+
+    // Edit Item Dialog
+    if (showEditDialog) {
+        Dialog(onDismissRequest = { showEditDialog = false }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Edit Item",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    OutlinedTextField(
+                        value = editedName,
+                        onValueChange = { editedName = it },
+                        label = { Text("Name") },
+                        isError = !isValidInput(editedName),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = editedCategory,
+                        onValueChange = { editedCategory = it },
+                        label = { Text("Category") },
+                        isError = !isValidInput(editedCategory),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = { showEditDialog = false }) {
+                            Text("Cancel")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = {
+                                viewModel.updateItemDetails(
+                                    name = editedName.trim(),
+                                    category = editedCategory.trim()
+                                )
+                                showEditDialog = false
+                            },
+                            enabled = isValidInput(editedName) && isValidInput(editedCategory)
+                        ) {
+                            Text("Update")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -201,7 +306,7 @@ fun AddValueDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Add New Value",
+                    text = "Update Value",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )

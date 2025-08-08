@@ -82,4 +82,14 @@ class ItemDetailViewModel @Inject constructor(
             hideDeleteDialog()
         }
     }
+
+    fun updateItemDetails(name: String, category: String) {
+        viewModelScope.launch {
+            _item.value?.let { item ->
+                val updatedItem = item.copy(name = name, category = category)
+                balanceSheetDao.updateBalanceSheetItem(updatedItem)
+                _item.value = updatedItem
+            }
+        }
+    }
 }
