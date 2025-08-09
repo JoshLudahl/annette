@@ -175,7 +175,7 @@ fun BalanceSheetItemCard(
                 text = currencyFormat.format(item.value ?: 0.0),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
