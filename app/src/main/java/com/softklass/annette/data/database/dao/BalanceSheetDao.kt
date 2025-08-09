@@ -98,6 +98,24 @@ interface BalanceSheetDao {
         ORDER BY bsv.date ASC
     """)
     fun getLiabilitiesHistoricalTotals(): Flow<List<HistoricalTotal>>
+
+    @Query("""
+        SELECT bsv.parentId as itemId, bsv.date, bsv.value
+        FROM balance_sheet bs
+        JOIN balance_sheet_values bsv ON bs.id = bsv.parentId
+        WHERE bs.type = 'asset'
+        ORDER BY bsv.date ASC
+    """)
+    fun getAssetsHistoricalEntries(): Flow<List<HistoricalEntry>>
+
+    @Query("""
+        SELECT bsv.parentId as itemId, bsv.date, bsv.value
+        FROM balance_sheet bs
+        JOIN balance_sheet_values bsv ON bs.id = bsv.parentId
+        WHERE bs.type = 'liability'
+        ORDER BY bsv.date ASC
+    """)
+    fun getLiabilitiesHistoricalEntries(): Flow<List<HistoricalEntry>>
 }
 
 data class BalanceSheetItemWithValue(
@@ -111,4 +129,10 @@ data class BalanceSheetItemWithValue(
 data class HistoricalTotal(
     val date: Long,
     val totalValue: Double
+)
+
+data class HistoricalEntry(
+    val itemId: Long,
+    val date: Long,
+    val value: Double
 )

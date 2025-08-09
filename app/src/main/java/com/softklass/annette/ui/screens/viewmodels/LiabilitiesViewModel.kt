@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.softklass.annette.data.database.dao.BalanceSheetDao
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.database.dao.HistoricalTotal
+import com.softklass.annette.data.database.dao.HistoricalEntry
 import com.softklass.annette.data.database.entities.BalanceSheetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,10 +46,43 @@ class LiabilitiesViewModel @Inject constructor(
 
     private fun loadHistoricalTotals() {
         viewModelScope.launch {
-            balanceSheetDao.getLiabilitiesHistoricalTotals().collect { totals ->
-                _historicalTotals.value = totals
+            balanceSheetDao.getLiabilitiesHistoricalEntries().collect { entries ->
+                _historicalTotals.value = computeForwardFilledTotals(entries)
             }
         }
+    }
+
+    private fun computeForwardFilledTotals(entries: List<HistoricalEntry>): List<HistoricalTotal> {
+        if (entries.isEmpty()) return emptyList()
+
+        val dates = entries.map { it.date }.toSortedSet().toList()
+
+        val itemDateValueMap: Map<Long, Map<Long, Double>> = entries
+            .groupBy { it.itemId }
+            .mapValues { (_, list) ->
+                list
+                    .groupBy { it.date }
+                    .mapValues { (_, sameDateList) -> sameDateList.maxByOrNull { e -> e.date }!!.value }
+            }
+
+        val lastValues = mutableMapOf<Long, Double?>()
+        val result = mutableListOf<HistoricalTotal>()
+
+        for (date in dates) {
+            var sum = 0.0
+            for ((itemId, dateMap) in itemDateValueMap) {
+                val v = dateMap[date]
+                if (v != null) {
+                    lastValues[itemId] = v
+                }
+                val current = lastValues[itemId]
+                if (current != null) {
+                    sum += current
+                }
+            }
+            result += HistoricalTotal(date = date, totalValue = sum)
+        }
+        return result
     }
 
     fun toggleChart() {
