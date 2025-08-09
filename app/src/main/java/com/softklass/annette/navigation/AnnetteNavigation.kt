@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star // Added for Budget
 import androidx.compose.material.icons.rounded.AddCard
 import androidx.compose.material.icons.rounded.Savings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
+import com.softklass.annette.feature.budget.ui.BudgetScreen
 import com.softklass.annette.ui.screens.AssetsScreen
 import com.softklass.annette.ui.screens.ItemDetailScreen
 import com.softklass.annette.ui.screens.LiabilitiesScreen
@@ -33,14 +35,25 @@ import com.softklass.annette.ui.screens.NetWorthScreen
 import com.softklass.annette.ui.screens.SettingsScreen
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
 import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
+import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
-sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
+@Serializable
+sealed class Screen(val route: String, val title: String, @Contextual val icon: ImageVector) {
+    @Serializable
     object NetWorth : Screen("net_worth", "Net Worth", Icons.Default.Home)
+    @Serializable
     object Liabilities : Screen("liabilities", "Liabilities", Icons.Rounded.AddCard)
+    @Serializable
     object Assets : Screen("assets", "Assets", Icons.Rounded.Savings)
+    @Serializable
+    object Budget : Screen("budget", "Budget", Icons.Filled.Star) // New Budget screen
+    @Serializable
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
-    object ItemDetail : Screen("item_detail/{itemId}/{itemName}/{itemCategory}/{itemType}", "Item Detail", Icons.Default.Home)
+    @Serializable
+    object ItemDetail : Screen("item_detail/{itemId}/{itemName}/{itemCategory}/{itemType}", "Item Detail", Icons.Default.Home) // This Icon might be a placeholder
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +64,7 @@ fun AnnetteApp() {
         Screen.NetWorth,
         Screen.Liabilities,
         Screen.Assets,
+        Screen.Budget, // Added Budget to bottom nav items
         Screen.Settings
     )
 
@@ -87,19 +101,13 @@ fun AnnetteBottomNavigation(
                     )
                 },
                 label = { Text(screen.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                selected = currentDestination?.hierarchy?.any { it == screen } == true,
                 onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
+                    navController.navigate(screen) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
                         launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
                 }
@@ -115,20 +123,21 @@ fun AnnetteNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.NetWorth.route,
+        startDestination = Screen.NetWorth,
         modifier = modifier
     ) {
-        composable(Screen.NetWorth.route) {
+        composable<Screen.NetWorth> {
             NetWorthScreen(viewModel = hiltViewModel<NetWorthViewModel>())
         }
-        composable(Screen.Liabilities.route) {
+        composable<Screen.Liabilities> {
             LiabilitiesScreen(
+                viewModel = hiltViewModel<LiabilitiesViewModel>(),
                 onNavigateToDetail = { itemId, itemName, itemCategory, itemType ->
                     navController.navigate("item_detail/$itemId/$itemName/$itemCategory/$itemType")
                 }
             )
         }
-        composable(Screen.Assets.route) {
+        composable<Screen.Assets> {
             AssetsScreen(
                 viewModel = hiltViewModel<AssetsViewModel>(),
                 onNavigateToDetail = { itemId, itemName, itemCategory, itemType ->
@@ -136,11 +145,12 @@ fun AnnetteNavHost(
                 }
             )
         }
-
-        composable(Screen.Settings.route) {
+        composable<Screen.Budget> { // Added route for BudgetScreen
+            BudgetScreen()
+        }
+        composable<Screen.Settings> {
             SettingsScreen()
         }
-
         composable(
             route = Screen.ItemDetail.route,
             arguments = listOf(

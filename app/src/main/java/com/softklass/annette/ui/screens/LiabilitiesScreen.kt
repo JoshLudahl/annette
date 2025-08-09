@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
 import com.softklass.annette.ui.components.BalanceSheetHeaderCard
@@ -44,7 +43,7 @@ import com.softklass.annette.ui.theme.AnnetteTheme
 @Composable
 fun LiabilitiesScreen(
     modifier: Modifier = Modifier,
-    viewModel: LiabilitiesViewModel = hiltViewModel(),
+    viewModel: LiabilitiesViewModel,
     onNavigateToDetail: (Long, String, String, String) -> Unit = { _, _, _, _ -> }
 ) {
     val liabilities by viewModel.liabilities.collectAsState()
