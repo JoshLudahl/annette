@@ -1,9 +1,17 @@
 package com.softklass.annette.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -88,29 +96,46 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
             .toList()
     }
 
-    // Build chart points and labels
-    val labelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
-    val xValues = remember(latestPerDay) { latestPerDay.indices.map { it.toFloat() } }
-    val yValues = remember(latestPerDay) { latestPerDay.map { it.value.toFloat() } }
-    val xLabels = remember(latestPerDay) { latestPerDay.map { labelFormatter.format(Date(it.date)) } }
-
-    val modelProducer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(xValues, yValues) {
-        modelProducer.runTransaction {
-            lineSeries { series(xValues, yValues) }
+    // Guard: need at least two points to draw a line chart safely
+    if (latestPerDay.size < 2) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No historical data available",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
-    }
+    } else {
+        // Build chart points and labels
+        val labelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
+        val xValues = remember(latestPerDay) { latestPerDay.indices.map { it.toFloat() } }
+        val yValues = remember(latestPerDay) { latestPerDay.map { it.value.toFloat() } }
+        val xLabels =
+            remember(latestPerDay) { latestPerDay.map { labelFormatter.format(Date(it.date)) } }
 
-    CartesianChartHost(
-        rememberCartesianChart(
-            startAxis = VerticalAxis.rememberStart(),
-            bottomAxis = HorizontalAxis.rememberBottom(
-                valueFormatter = { _, value, _ ->
-                    val index = value.toInt()
-                    if (index in xLabels.indices) xLabels[index] else ""
-                }
+        val modelProducer = remember { CartesianChartModelProducer() }
+        LaunchedEffect(xValues, yValues) {
+            modelProducer.runTransaction {
+                lineSeries { series(xValues, yValues) }
+            }
+        }
+
+        CartesianChartHost(
+            rememberCartesianChart(
+                rememberLineCartesianLayer(),
+                startAxis = VerticalAxis.rememberStart(),
+                bottomAxis = HorizontalAxis.rememberBottom(
+                    valueFormatter = { _, value, _ ->
+                        val index = value.toInt()
+                        if (index in xLabels.indices) xLabels[index] else ""
+                    }
+                ),
             ),
-        ),
-        modelProducer,
-    )
+            modelProducer,
+        )
+    }
 }

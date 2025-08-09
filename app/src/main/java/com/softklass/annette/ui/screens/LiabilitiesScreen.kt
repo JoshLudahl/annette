@@ -1,12 +1,10 @@
 package com.softklass.annette.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -54,7 +52,11 @@ fun LiabilitiesScreen(
     val showChart by viewModel.showChart.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
 
-    var itemToDelete by remember { mutableStateOf<com.softklass.annette.data.database.dao.BalanceSheetItemWithValue?>(null) }
+    var itemToDelete by remember {
+        mutableStateOf<com.softklass.annette.data.database.dao.BalanceSheetItemWithValue?>(
+            null
+        )
+    }
 
     Column(
         modifier = modifier
@@ -85,23 +87,7 @@ fun LiabilitiesScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    if (historicalTotals.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No historical data available",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    } else {
-
-                        HistoricalChart(historicalTotals = historicalTotals)
-
-                    }
+                    HistoricalChart(historicalTotals = historicalTotals)
                 }
             }
         }
@@ -162,7 +148,7 @@ fun LiabilitiesScreen(
                 onNavigateToDetail = { id, name, amount, category ->
                     onNavigateToDetail(id.toLong(), name, amount, category)
                 },
-                onLonPress = { item -> 
+                onLonPress = { item ->
                     itemToDelete = item
                 }
             )
