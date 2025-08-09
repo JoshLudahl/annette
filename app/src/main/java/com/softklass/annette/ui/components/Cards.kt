@@ -58,7 +58,10 @@ fun BalanceSheetHeaderCard(
             .padding(bottom = 16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = when (type) {
+                BalanceSheetType.ASSETS -> MaterialTheme.colorScheme.primary
+                BalanceSheetType.LIABILITIES -> MaterialTheme.colorScheme.error
+            }
         )
     ) {
         Column(
