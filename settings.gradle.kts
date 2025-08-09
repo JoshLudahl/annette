@@ -22,4 +22,3 @@ dependencyResolutionManagement {
 rootProject.name = "Annette"
 include(":app")
 include(":feature")
-include(":feature:entry")
