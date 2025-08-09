@@ -14,6 +14,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.softklass.annette.data.database.dao.HistoricalTotal
+import com.softklass.annette.data.database.entities.BalanceSheetValues
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,17 +34,15 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
             .toList()
     }
 
-    // Group by month-year and sum totals, but only using latest value per day
-    val monthYearFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
+    // Group by day label and sum totals, but only using latest value per day
+    val dayLabelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
     val groupedData = remember(latestPerDay) {
         latestPerDay.groupBy {
-            // Convert epoch to month-year string
-            monthYearFormatter.format(Date(it.date))
-        }.map { (monthYear, values) ->
-            monthYear to values.sumOf { it.totalValue }
+            dayLabelFormatter.format(Date(it.date))
+        }.map { (label, values) ->
+            label to values.sumOf { it.totalValue }
         }.sortedBy { pair ->
-            // Sort by date value parsed from monthYear
-            monthYearFormatter.parse(pair.first)?.time ?: 0L
+            dayLabelFormatter.parse(pair.first)?.time ?: 0L
         }
     }
 
@@ -65,7 +64,48 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
             startAxis = VerticalAxis.rememberStart(),
             bottomAxis = HorizontalAxis.rememberBottom(
                 valueFormatter = { _, value, _ ->
-                    // Show formatted label if in range. 'value' is Float.
+                    val index = value.toInt()
+                    if (index in xLabels.indices) xLabels[index] else ""
+                }
+            ),
+        ),
+        modelProducer,
+    )
+}
+
+@Composable
+fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
+    Log.d("ItemHistoricalChart", "values: $values")
+
+    // Deduplicate by day keeping latest
+    val dayKeyFormatter = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
+    val latestPerDay = remember(values) {
+        values
+            .groupBy { dayKeyFormatter.format(Date(it.date)) }
+            .mapValues { entry -> entry.value.maxByOrNull { it.date }!! }
+            .values
+            .sortedBy { it.date }
+            .toList()
+    }
+
+    // Build chart points and labels
+    val labelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
+    val xValues = remember(latestPerDay) { latestPerDay.indices.map { it.toFloat() } }
+    val yValues = remember(latestPerDay) { latestPerDay.map { it.value.toFloat() } }
+    val xLabels = remember(latestPerDay) { latestPerDay.map { labelFormatter.format(Date(it.date)) } }
+
+    val modelProducer = remember { CartesianChartModelProducer() }
+    LaunchedEffect(xValues, yValues) {
+        modelProducer.runTransaction {
+            lineSeries { series(xValues, yValues) }
+        }
+    }
+
+    CartesianChartHost(
+        rememberCartesianChart(
+            startAxis = VerticalAxis.rememberStart(),
+            bottomAxis = HorizontalAxis.rememberBottom(
+                valueFormatter = { _, value, _ ->
                     val index = value.toInt()
                     if (index in xLabels.indices) xLabels[index] else ""
                 }

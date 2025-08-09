@@ -115,30 +115,31 @@ fun ItemDetailScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Historical Chart Placeholder
+            // Historical Chart
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                if (historicalValues.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Historical Chart",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "Chart implementation coming soon",
+                            text = "No historical data yet",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp)
+                    ) {
+                        com.softklass.annette.ui.components.ItemHistoricalChart(historicalValues)
                     }
                 }
             }
