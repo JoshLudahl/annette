@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.softklass.annette.amountFormatted
 import com.softklass.annette.data.database.entities.BalanceSheetValues
 import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
 import java.text.NumberFormat
@@ -322,7 +323,7 @@ fun AddValueDialog(
 
                 OutlinedTextField(
                     value = valueText,
-                    onValueChange = { valueText = it },
+                    onValueChange = { valueText = it.amountFormatted },
                     label = { Text("Amount") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth()

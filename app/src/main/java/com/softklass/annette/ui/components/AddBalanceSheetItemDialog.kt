@@ -1,5 +1,6 @@
 package com.softklass.annette.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,9 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AttachMoney
+import androidx.compose.material.icons.rounded.Category
+import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,6 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.softklass.annette.amountFormatted
 import com.softklass.annette.data.model.BalanceSheetType
 
 @Composable
@@ -75,18 +82,27 @@ fun AddBalanceSheetItemDialog(
                             imeAction = ImeAction.Next,
                             capitalization = KeyboardCapitalization.Sentences,
                         ),
+                    leadingIcon = { Icon(
+                        imageVector = Icons.Rounded.Title,
+                        contentDescription = "Title",
+
+                    ) },
                 )
 
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { amount = it.replace(",", "") },
+                    onValueChange = {
+                        amount = it.amountFormatted
+                    },
                     label = { Text("Amount") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    singleLine = true
+                    maxLines = 1,
+                    singleLine = true,
+                    leadingIcon = { Icon(Icons.Rounded.AttachMoney, contentDescription = "Amount") },
                 )
 
                 OutlinedTextField(
@@ -101,7 +117,18 @@ fun AddBalanceSheetItemDialog(
                             imeAction = ImeAction.Done,
                             capitalization = KeyboardCapitalization.Sentences,
                         ),
+                    leadingIcon = { Icon(Icons.Rounded.Category, contentDescription = "Category")},
                 )
+
+                val errorMessage = remember { mutableStateOf(false) }
+
+                if (errorMessage.value) {
+                    Text(
+                        text = "Please fill all fields correctly",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -120,7 +147,16 @@ fun AddBalanceSheetItemDialog(
                                 val amountDouble = amount.toDoubleOrNull()
                                 if (amountDouble != null && amountDouble > 0) {
                                     onAddItem(name.trim(), amountDouble, category.trim())
+                                } else {
+                                    Log.e("AddItemDialog", "Invalid amount: $amount")
+                                    errorMessage.value = true
                                 }
+                            } else {
+                                Log.e(
+                                    "AddItemDialog",
+                                    "Missing required fields; name: $name, amount: $amount, category: $category"
+                                )
+                                errorMessage.value = true
                             }
                         },
                         enabled = name.isNotBlank() && amount.isNotBlank() && category.isNotBlank()
