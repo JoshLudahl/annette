@@ -15,7 +15,8 @@ import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 @Composable
 fun BalanceSheetItemList(
     items: List<BalanceSheetItemWithValue>,
-    onNavigateToDetail: (Int, String, String, String) -> Unit
+    onNavigateToDetail: (Int, String, String, String) -> Unit,
+    onLonPress: (BalanceSheetItemWithValue) -> Unit
 ) {
     val grouped = items.groupBy { it.category }
     LazyColumn(
@@ -40,6 +41,9 @@ fun BalanceSheetItemList(
                             item.category,
                             item.type
                         )
+                    },
+                    onLongPress = {
+                        onLonPress(item)
                     }
                 )
             }

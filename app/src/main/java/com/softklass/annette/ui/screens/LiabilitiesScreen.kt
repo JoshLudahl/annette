@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +53,8 @@ fun LiabilitiesScreen(
     val historicalTotals by viewModel.historicalTotals.collectAsState()
     val showChart by viewModel.showChart.collectAsState()
     val showAddDialog by viewModel.showAddDialog.collectAsState()
+
+    var itemToDelete by remember { mutableStateOf<com.softklass.annette.data.database.dao.BalanceSheetItemWithValue?>(null) }
 
     Column(
         modifier = modifier
@@ -156,6 +161,9 @@ fun LiabilitiesScreen(
                 liabilities,
                 onNavigateToDetail = { id, name, amount, category ->
                     onNavigateToDetail(id.toLong(), name, amount, category)
+                },
+                onLonPress = { item -> 
+                    itemToDelete = item
                 }
             )
         }
@@ -169,6 +177,19 @@ fun LiabilitiesScreen(
                 viewModel.addLiability(name, amount, category)
             },
             type = BalanceSheetType.LIABILITIES
+        )
+    }
+
+    // Delete confirm dialog
+    val pendingDelete = itemToDelete
+    if (pendingDelete != null) {
+        com.softklass.annette.ui.components.ConfirmDeleteItemDialog(
+            itemName = pendingDelete.name,
+            onDismiss = { itemToDelete = null },
+            onConfirmDelete = {
+                viewModel.deleteLiability(pendingDelete)
+                itemToDelete = null
+            }
         )
     }
 }
