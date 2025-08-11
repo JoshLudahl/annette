@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star // Added for Budget
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.AddCard
 import androidx.compose.material.icons.rounded.Savings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,18 +21,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
 import com.softklass.annette.feature.budget.ui.BudgetScreen
 import com.softklass.annette.ui.screens.AssetsScreen
 import com.softklass.annette.ui.screens.ItemDetailScreen
 import com.softklass.annette.ui.screens.LiabilitiesScreen
 import com.softklass.annette.ui.screens.NetWorthScreen
 import com.softklass.annette.ui.screens.SettingsScreen
+import com.softklass.annette.ui.screens.settings.PreferencesScreen
+import com.softklass.annette.ui.screens.settings.PreferencesViewModel
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
 import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
@@ -44,16 +46,29 @@ import kotlinx.serialization.Serializable
 sealed class Screen(val route: String, val title: String, @Contextual val icon: ImageVector) {
     @Serializable
     object NetWorth : Screen("net_worth", "Net Worth", Icons.Default.Home)
+
     @Serializable
     object Liabilities : Screen("liabilities", "Liabilities", Icons.Rounded.AddCard)
+
     @Serializable
     object Assets : Screen("assets", "Assets", Icons.Rounded.Savings)
+
     @Serializable
     object Budget : Screen("budget", "Budget", Icons.Filled.Star) // New Budget screen
+
     @Serializable
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+
     @Serializable
-    object ItemDetail : Screen("item_detail/{itemId}/{itemName}/{itemCategory}/{itemType}", "Item Detail", Icons.Default.Home) // This Icon might be a placeholder
+    object ItemDetail : Screen(
+        "item_detail/{itemId}/{itemName}/{itemCategory}/{itemType}",
+        "Item Detail",
+        Icons.Default.Home
+    ) // This Icon might be a placeholder
+
+    @Serializable
+    object Preference :
+        Screen("preference", "Preference", Icons.Default.Home) // This Icon might be a placeholder
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,7 +166,9 @@ fun AnnetteNavHost(
         }
 
         composable<Screen.Settings> {
-            SettingsScreen()
+            SettingsScreen(
+                onSettingsItemClick = { navController.navigate(Screen.Preference) },
+            )
         }
         composable(
             route = Screen.ItemDetail.route,
@@ -166,7 +183,7 @@ fun AnnetteNavHost(
             val itemName = backStackEntry.arguments?.getString("itemName") ?: ""
             val itemCategory = backStackEntry.arguments?.getString("itemCategory") ?: ""
             val itemType = backStackEntry.arguments?.getString("itemType") ?: ""
-            
+
             ItemDetailScreen(
                 itemId = itemId,
                 itemName = itemName,
@@ -174,6 +191,13 @@ fun AnnetteNavHost(
                 itemType = itemType,
                 onNavigateBack = { navController.popBackStack() },
                 viewModel = hiltViewModel<ItemDetailViewModel>()
+            )
+        }
+
+        composable<Screen.Preference> {
+            PreferencesScreen(
+                viewModel = hiltViewModel<PreferencesViewModel>(),
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }

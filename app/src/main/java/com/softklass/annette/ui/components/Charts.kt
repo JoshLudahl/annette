@@ -67,9 +67,9 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
 
     val modelProducer = remember { CartesianChartModelProducer() }
     LaunchedEffect(xValues, yValues) {
-        modelProducer.runTransaction {
-            lineSeries { series(xValues, yValues) }
-        }
+            modelProducer.runTransaction {
+                lineSeries { series(xValues, yValues) }
+            }
     }
 
     CartesianChartHost(
@@ -102,8 +102,7 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
             .toList()
     }
 
-    // Guard: need at least two points to draw a line chart safely
-    if (latestPerDay.size < 2) {
+    if (latestPerDay.size < 2 || values.isEmpty()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

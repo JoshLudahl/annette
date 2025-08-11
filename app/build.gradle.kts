@@ -29,6 +29,13 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = " debug"
+            resValue(type = "string", name = "app_name", value = "Annette debug")
+        }
     }
 
     compileOptions {
@@ -38,6 +45,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -60,11 +68,16 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.material3.android)
+    implementation(libs.material)
 
     // ROOM
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.androidx.room.compiler)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.androidx.datastore.preferences)
 
     // HILT
     implementation(libs.hilt.android)

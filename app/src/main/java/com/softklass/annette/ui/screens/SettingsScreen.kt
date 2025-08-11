@@ -43,7 +43,10 @@ data class SettingsItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
+fun SettingsScreen(
+    onSettingsItemClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val settingsItems = listOf(
         SettingsItem(
             title = "Profile",
@@ -53,7 +56,8 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         SettingsItem(
             title = "Preferences",
             subtitle = "App settings and customization",
-            icon = Icons.Default.Settings
+            icon = Icons.Default.Settings,
+            onClick = onSettingsItemClick
         ),
         SettingsItem(
             title = "Notifications",
@@ -205,6 +209,9 @@ fun SettingsItemCard(settingsItem: SettingsItem) {
 @Composable
 fun SettingsScreenPreview() {
     AnnetteTheme {
-        SettingsScreen()
+        SettingsScreen(
+            onSettingsItemClick = { },
+            modifier = Modifier
+        )
     }
 }
