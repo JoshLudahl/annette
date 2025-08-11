@@ -65,26 +65,30 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
     val yValues = groupedData.map { it.second.toFloat() }
     val xLabels = groupedData.map { it.first }
 
-    val modelProducer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(xValues, yValues) {
+    if (xValues.isEmpty() || yValues.isEmpty() || xValues.size < 2) {
+        EmptyChart()
+    } else {
+        val modelProducer = remember { CartesianChartModelProducer() }
+        LaunchedEffect(xValues, yValues) {
             modelProducer.runTransaction {
                 lineSeries { series(xValues, yValues) }
             }
-    }
+        }
 
-    CartesianChartHost(
-        rememberCartesianChart(
-            rememberLineCartesianLayer(),
-            startAxis = VerticalAxis.rememberStart(),
-            bottomAxis = HorizontalAxis.rememberBottom(
-                valueFormatter = { _, value, _ ->
-                    val index = value.toInt()
-                    if (index in xLabels.indices) xLabels[index] else ""
-                }
+        CartesianChartHost(
+            rememberCartesianChart(
+                rememberLineCartesianLayer(),
+                startAxis = VerticalAxis.rememberStart(),
+                bottomAxis = HorizontalAxis.rememberBottom(
+                    valueFormatter = { _, value, _ ->
+                        val index = value.toInt()
+                        if (index in xLabels.indices) xLabels[index] else ""
+                    }
+                ),
             ),
-        ),
-        modelProducer,
-    )
+            modelProducer,
+        )
+    }
 }
 
 @Composable
@@ -103,27 +107,7 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
     }
 
     if (latestPerDay.size < 2 || values.isEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.TrendingUp,
-                contentDescription = "No historical data",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(40.dp)
-            )
-
-            Text(
-                text = "No historical data available.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-        }
+        EmptyChart()
     } else {
         // Build chart points and labels
         val labelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
@@ -154,3 +138,29 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
         )
     }
 }
+
+@Composable
+fun EmptyChart() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.TrendingUp,
+            contentDescription = "No historical data",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(40.dp)
+        )
+
+        Text(
+            text = "No historical data available.",
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+    }
+}
+
