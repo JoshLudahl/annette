@@ -102,7 +102,7 @@ fun AnnetteBottomNavigation(
                     )
                 },
                 label = { Text(screen.title) },
-                selected = currentDestination?.hierarchy?.any { it == screen } == true,
+                selected = currentDestination?.hierarchy?.any { it.route == screen::class.qualifiedName } == true,
                 onClick = {
                     navController.navigate(screen) {
                         popUpTo(navController.graph.findStartDestination().id) {
