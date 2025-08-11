@@ -27,7 +27,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
-import com.softklass.annette.feature.budget.navigation.budgetScreen
 import com.softklass.annette.feature.budget.ui.BudgetScreen
 import com.softklass.annette.ui.screens.AssetsScreen
 import com.softklass.annette.ui.screens.ItemDetailScreen
@@ -127,7 +126,6 @@ fun AnnetteNavHost(
         startDestination = Screen.NetWorth,
         modifier = modifier
     ) {
-        budgetScreen(navController = navController)
         composable<Screen.NetWorth> {
             NetWorthScreen(viewModel = hiltViewModel<NetWorthViewModel>())
         }

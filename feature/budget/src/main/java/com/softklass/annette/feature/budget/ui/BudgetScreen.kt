@@ -48,7 +48,6 @@ fun BudgetScreen(
 fun BudgetScreenHost(
     state: Int
 ) {
-
     when (state) {
         0 -> DashboardTabContent()
         1 -> ExpensesTabContent()
@@ -61,18 +60,6 @@ fun BudgetScreenHost(
 fun DashboardTabContent() {
     // todo: implement dashboard content
     Text("Dashboard content")
-}
-
-@Composable
-fun ExpensesTabContent() {
-    // todo: implement expenses content
-    Text("Expenses content")
-}
-
-@Composable
-fun IncomeTabContent() {
-    // todo: implement income content
-    Text("Income content")
 }
 
 @Composable
