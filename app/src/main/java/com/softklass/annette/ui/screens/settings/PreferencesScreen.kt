@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -34,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +55,7 @@ fun PreferencesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text("Preferences") },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -212,51 +208,15 @@ fun PreferencesScreen(
 
                             Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
 
-                            Text(label.name.lowercase().replaceFirstChar { it.titlecaseChar() }, maxLines = 1)
+                            Text(
+                                label.name.lowercase().replaceFirstChar { it.titlecaseChar() },
+                                maxLines = 1
+                            )
                         }
                     }
                 }
             }
-
-            // Push the version and review button to the bottom
             Spacer(modifier = Modifier.weight(1f))
-
-            // Add a section for app feedback
-            Text(
-                text = "Feedback",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Get the current context
-            val context = LocalContext.current
-
-            Button(
-                onClick = { viewModel.openPlayStoreForReview(context) },
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Star,
-                    contentDescription = "Leave a review icon",
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Rate this app")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Display app version at the bottom
-            Text(
-                text = "Version: ${viewModel.appVersion}",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
     }
 }
