@@ -1,25 +1,34 @@
-package com.softklass.annette.feature.budget.ui
+package com.softklass.annette.feature.budget.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.softklass.annette.feature.budget.data.model.BudgetItemType
+import com.softklass.annette.feature.budget.ui.components.AddBudgetItemBottomSheet
+import com.softklass.annette.feature.budget.ui.components.BudgetFloatingActionButton
+import kotlinx.coroutines.launch
 
 enum class BudgetScreenTab {
     DASHBOARD,
@@ -27,20 +36,50 @@ enum class BudgetScreenTab {
     INCOME
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetScreen(
 ) {
     val titles = BudgetScreenTab.entries
 
     var state by remember { mutableIntStateOf(0) }
+    var shouldShowDialog by remember { mutableStateOf(false) }
+    var type by remember { mutableStateOf(BudgetItemType.INCOME) }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val scope = rememberCoroutineScope()
+
     Column {
         SecondaryTabRow(selectedTabIndex = state) {
             titles.forEachIndexed { index, title ->
-                FancyTab(title = title.toString(), onClick = { state = index }, selected = (index == state))
+                FancyTab(
+                    title = title.toString(),
+                    onClick = { state = index },
+                    selected = (index == state)
+                )
 
             }
         }
+
         BudgetScreenHost(state = state)
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        BudgetFloatingActionButton(
+            onClick = {
+                shouldShowDialog = true
+                scope.launch {
+                    bottomSheetState.hide()
+                }
+                type = it
+            }
+        )
+    }
+
+    if (shouldShowDialog) {
+        AddBudgetItemBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = { shouldShowDialog = false }
+        )
     }
 }
 
@@ -57,20 +96,18 @@ fun BudgetScreenHost(
 }
 
 @Composable
-fun DashboardTabContent() {
-    // todo: implement dashboard content
-    Text("Dashboard content")
-}
-
-@Composable
 fun FancyTab(title: String, onClick: () -> Unit, selected: Boolean) {
     Tab(selected, onClick) {
         Column(
-            Modifier.padding(10.dp).height(50.dp).fillMaxWidth(),
+            Modifier
+                .padding(10.dp)
+                .height(50.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Box(
-                Modifier.size(10.dp)
+                Modifier
+                    .size(10.dp)
                     .align(Alignment.CenterHorizontally)
                     .background(
                         color =

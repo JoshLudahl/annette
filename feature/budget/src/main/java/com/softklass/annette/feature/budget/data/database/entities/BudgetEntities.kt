@@ -11,6 +11,7 @@ data class BudgetItem(
     val name: String,
     val category: String,
     val type: BudgetItemType,
+    val dueDate: Long = System.currentTimeMillis(),
 )
 
 @Entity(tableName = "budget_value")

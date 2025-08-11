@@ -27,4 +27,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providesBalanceSheetDao(database: AnnetteDatabase) = database.balanceSheetDao()
+
+    @Singleton
+    @Provides
+    fun providesBudgetDao(database: AnnetteDatabase) = database.budgetDao()
 }
