@@ -1,6 +1,5 @@
 package com.softklass.annette.feature.budget.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +59,7 @@ fun BudgetScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        bottomBar = {  },
+        bottomBar = { },
         floatingActionButton = {
             BudgetFloatingActionButton(
                 onClick = {
@@ -75,7 +73,9 @@ fun BudgetScreen(
         floatingActionButtonPosition = androidx.compose.material3.FabPosition.End,
         content = { innerPadding ->
             Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
             ) {
                 SecondaryTabRow(selectedTabIndex = state) {
                     titles.forEachIndexed { index, title ->
@@ -87,7 +87,6 @@ fun BudgetScreen(
 
                     }
                 }
-
 
                 BudgetScreenHost(
                     state = state,
