@@ -5,13 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -57,50 +58,61 @@ fun BudgetScreen(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
 
-    Column {
-        SecondaryTabRow(selectedTabIndex = state) {
-            titles.forEachIndexed { index, title ->
-                FancyTab(
-                    title = title.toString(),
-                    onClick = { state = index },
-                    selected = (index == state)
-                )
+    Scaffold(
+        bottomBar = {  },
+        floatingActionButton = {
+            BudgetFloatingActionButton(
+                onClick = {
+                    scope.launch {
+                        bottomSheetState.show()
+                    }
+                    type = it
+                }
+            )
+        },
+        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End,
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
+            ) {
+                SecondaryTabRow(selectedTabIndex = state) {
+                    titles.forEachIndexed { index, title ->
+                        FancyTab(
+                            title = title.toString(),
+                            onClick = { state = index },
+                            selected = (index == state)
+                        )
 
+                    }
+                }
+
+                BudgetScreenHost(state = state)
+
+
+
+
+            }
+
+
+            AnimatedVisibility(visible = bottomSheetState.isVisible) {
+                AddBudgetItemBottomSheet(
+                    sheetState = bottomSheetState,
+                    onDismissRequest = {
+                        scope.launch {
+                            bottomSheetState.hide()
+                        }
+                    },
+                    initialType = type,
+                    onAddBudgetItem = {
+                        viewModel.addBudgetItem(it)
+                        scope.launch {
+                            bottomSheetState.hide()
+                        }
+                    }
+                )
             }
         }
-
-        BudgetScreenHost(state = state)
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        BudgetFloatingActionButton(
-            onClick = {
-                scope.launch {
-                    bottomSheetState.show()
-                }
-                type = it
-            }
-        )
-    }
-
-
-    AnimatedVisibility(visible = bottomSheetState.isVisible) {
-        AddBudgetItemBottomSheet(
-            sheetState = bottomSheetState,
-            onDismissRequest = {
-                scope.launch {
-                    bottomSheetState.hide()
-                }
-            },
-            initialType = type,
-            onAddBudgetItem = {
-                viewModel.addBudgetItem(it)
-                scope.launch {
-                    bottomSheetState.hide()
-                }
-            }
-        )
-    }
+    )
 }
 
 @Composable
@@ -110,7 +122,10 @@ fun BudgetScreenHost(
     when (state) {
         0 -> DashboardTabContent()
         1 -> ExpensesTabContent()
-        2 -> IncomeTabContent()
+        2 -> IncomeTabContent(
+            budgetListItem = emptyList<BudgetEntity>(),
+
+        )
         else -> throw NoSuchElementException()
     }
 }
@@ -139,6 +154,9 @@ fun FancyTab(title: String, onClick: () -> Unit, selected: Boolean) {
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
+                color =
+                    if (selected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
             )
         }
     }

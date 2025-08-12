@@ -2,7 +2,6 @@ package com.softklass.annette.feature.budget.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -51,11 +50,7 @@ fun BudgetFloatingActionButton(
     val listState = rememberLazyListState()
     val fabVisible by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.BottomEnd,
-    ) {
-
+    Box {
         val items =
             listOf(
                 FloatingActionButtonMenuItem(
@@ -75,7 +70,7 @@ fun BudgetFloatingActionButton(
         BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
 
         FloatingActionButtonMenu(
-            modifier = Modifier.align(Alignment.BottomEnd),
+
             expanded = fabMenuExpanded,
             button = {
                 ToggleFloatingActionButton(
