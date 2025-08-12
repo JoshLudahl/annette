@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -45,18 +43,9 @@ fun IncomeTabContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(260.dp)
-        ) {
-
-        }
-
         BudgetSummaryCard(
             title = "Budget for October",
             amount = "$2,478",
@@ -69,9 +58,6 @@ fun IncomeTabContent(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(top = 4.dp)
         )
-
-
-
         Spacer(modifier = Modifier.height(16.dp))
         ListContent(list = incomeList.value)
     }

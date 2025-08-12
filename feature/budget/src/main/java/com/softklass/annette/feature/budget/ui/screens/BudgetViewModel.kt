@@ -3,8 +3,8 @@ package com.softklass.annette.feature.budget.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softklass.annette.feature.budget.data.database.dao.BudgetDao
+import com.softklass.annette.feature.budget.data.database.entities.BudgetItem
 import com.softklass.annette.feature.budget.data.database.entities.BudgetValue
-import com.softklass.annette.feature.budget.data.database.entities.budgetEntityToBudgetItem
 import com.softklass.annette.feature.budget.data.model.BudgetItemType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -29,12 +29,18 @@ class BudgetViewModel @Inject constructor(
         )
 
     fun addBudgetItem(entity: BudgetEntity) {
-        val budgetItem = budgetEntityToBudgetItem(entity)
+        val budgetItem = BudgetItem(
+            name = entity.name,
+            category = entity.category,
+            type = entity.type,
+            dueDate = entity.dueDateMillis
+        )
+
         viewModelScope.launch {
-            budgetDao.insertBudgetItem(budgetItem)
+            val id = budgetDao.insertBudgetItem(budgetItem)
             budgetDao.insertBudgetValue(
                 BudgetValue(
-                    parentId = budgetItem.id,
+                    parentId = id,
                     value = entity.amount,
                 )
             )
