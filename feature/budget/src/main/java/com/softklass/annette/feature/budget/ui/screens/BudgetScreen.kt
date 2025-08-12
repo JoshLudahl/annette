@@ -1,5 +1,6 @@
 package com.softklass.annette.feature.budget.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,9 +37,18 @@ enum class BudgetScreenTab {
     INCOME
 }
 
+data class BudgetEntity(
+    val name: String,
+    val amount: Double,
+    val category: String,
+    val type: BudgetItemType,
+    val dueDateMillis: Long
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetScreen(
+    viewModel: BudgetViewModel
 ) {
     val titles = BudgetScreenTab.entries
 
@@ -75,12 +85,20 @@ fun BudgetScreen(
         )
     }
 
-    if (shouldShowDialog) {
-        AddBudgetItemBottomSheet(
-            sheetState = bottomSheetState,
-            onDismissRequest = { shouldShowDialog = false }
-        )
-    }
+
+        AnimatedVisibility(visible = shouldShowDialog) {
+            AddBudgetItemBottomSheet(
+                sheetState = bottomSheetState,
+                onDismissRequest = { shouldShowDialog = false },
+                onAddBudgetItem =  {
+                    viewModel.addBudgetItem(it)
+                    shouldShowDialog = false
+                }
+
+            )
+        }
+
+
 }
 
 @Composable

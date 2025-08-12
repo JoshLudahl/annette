@@ -9,16 +9,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.softklass.annette.feature.budget.data.model.BudgetItemType
+import com.softklass.annette.feature.budget.ui.screens.BudgetEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -41,13 +42,7 @@ fun AddBudgetItemBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     initialType: BudgetItemType = BudgetItemType.INCOME,
-    onAddBudgetItem: (
-        name: String,
-        amount: Double,
-        category: String,
-        type: BudgetItemType,
-        dueDateMillis: Long
-    ) -> Unit = { _, _, _, _, _ -> }
+    onAddBudgetItem: (BudgetEntity) -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
@@ -184,11 +179,13 @@ fun AddBudgetItemBottomSheet(
                                 parsed != null && parsed > 0.0
                             ) {
                                 onAddBudgetItem(
-                                    name.trim(),
-                                    parsed,
-                                    category.trim(),
-                                    type,
-                                    dueDateMillis
+                                    BudgetEntity(
+                                        name = name.trim(),
+                                        amount = parsed,
+                                        category = category.trim(),
+                                        type = type,
+                                        dueDateMillis = dueDateMillis
+                                    )
                                 )
                             }
                         },

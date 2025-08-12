@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.softklass.annette.feature.budget.ui.screens.BudgetScreen
+import com.softklass.annette.feature.budget.ui.screens.BudgetViewModel
 import com.softklass.annette.ui.screens.AssetsScreen
 import com.softklass.annette.ui.screens.ItemDetailScreen
 import com.softklass.annette.ui.screens.LiabilitiesScreen
@@ -162,7 +163,9 @@ fun AnnetteNavHost(
         }
 
         composable<Screen.Budget> { // Added route for BudgetScreen
-            BudgetScreen()
+            BudgetScreen(
+                viewModel = hiltViewModel<BudgetViewModel>()
+            )
         }
 
         composable<Screen.Settings> {

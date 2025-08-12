@@ -3,6 +3,7 @@ package com.softklass.annette.feature.budget.data.database.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.softklass.annette.feature.budget.data.model.BudgetItemType
+import com.softklass.annette.feature.budget.ui.screens.BudgetEntity
 
 @Entity(tableName = "budget_item")
 data class BudgetItem(
@@ -22,3 +23,12 @@ data class BudgetValue(
     val value: Double,
     val date: Long = System.currentTimeMillis(),
 )
+
+fun budgetEntityToBudgetItem(entity: BudgetEntity): BudgetItem {
+    return BudgetItem(
+        name = entity.name,
+        category = entity.category,
+        type = entity.type,
+        dueDate = entity.dueDateMillis,
+    )
+}
