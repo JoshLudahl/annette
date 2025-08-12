@@ -53,7 +53,6 @@ fun BudgetScreen(
     val titles = BudgetScreenTab.entries
 
     var state by remember { mutableIntStateOf(0) }
-    var shouldShowDialog by remember { mutableStateOf(false) }
     var type by remember { mutableStateOf(BudgetItemType.INCOME) }
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
@@ -76,9 +75,8 @@ fun BudgetScreen(
 
         BudgetFloatingActionButton(
             onClick = {
-                shouldShowDialog = true
                 scope.launch {
-                    bottomSheetState.hide()
+                    bottomSheetState.show()
                 }
                 type = it
             }
@@ -86,19 +84,23 @@ fun BudgetScreen(
     }
 
 
-        AnimatedVisibility(visible = shouldShowDialog) {
-            AddBudgetItemBottomSheet(
-                sheetState = bottomSheetState,
-                onDismissRequest = { shouldShowDialog = false },
-                onAddBudgetItem =  {
-                    viewModel.addBudgetItem(it)
-                    shouldShowDialog = false
+    AnimatedVisibility(visible = bottomSheetState.isVisible) {
+        AddBudgetItemBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                scope.launch {
+                    bottomSheetState.hide()
                 }
-
-            )
-        }
-
-
+            },
+            initialType = type,
+            onAddBudgetItem = {
+                viewModel.addBudgetItem(it)
+                scope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+        )
+    }
 }
 
 @Composable
