@@ -22,6 +22,9 @@ interface BudgetDao {
     @Query("SELECT * FROM budget_item WHERE category = :category")
     fun getBudgetItemsByCategory(category: String): Flow<List<BudgetItem>>
 
+    @Query("SELECT * FROM budget_item WHERE type = :type")
+    fun getBudgetItemsByType(type: String): Flow<List<BudgetItem>>
+
     @Query("SELECT * FROM budget_item WHERE name = :name LIMIT 1")
     suspend fun getBudgetItemByName(name: String): BudgetItem?
 

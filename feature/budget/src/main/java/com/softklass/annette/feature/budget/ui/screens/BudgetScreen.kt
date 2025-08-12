@@ -1,5 +1,6 @@
 package com.softklass.annette.feature.budget.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,13 +88,12 @@ fun BudgetScreen(
                     }
                 }
 
-                BudgetScreenHost(state = state)
 
-
-
-
+                BudgetScreenHost(
+                    state = state,
+                    viewModel = viewModel
+                )
             }
-
 
             AnimatedVisibility(visible = bottomSheetState.isVisible) {
                 AddBudgetItemBottomSheet(
@@ -117,15 +118,13 @@ fun BudgetScreen(
 
 @Composable
 fun BudgetScreenHost(
-    state: Int
+    state: Int,
+    viewModel: BudgetViewModel
 ) {
     when (state) {
         0 -> DashboardTabContent()
         1 -> ExpensesTabContent()
-        2 -> IncomeTabContent(
-            budgetListItem = emptyList<BudgetEntity>(),
-
-        )
+        2 -> IncomeTabContent(viewModel = viewModel)
         else -> throw NoSuchElementException()
     }
 }
