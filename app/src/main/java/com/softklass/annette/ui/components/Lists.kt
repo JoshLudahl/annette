@@ -1,6 +1,8 @@
 package com.softklass.annette.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +13,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Text
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun BalanceSheetItemList(
@@ -24,12 +28,26 @@ fun BalanceSheetItemList(
     ) {
         grouped.forEach { (category, groupItems) ->
             item {
-                Text(
-                    text = category,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                Row {
+                    Text(
+                        text = category,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
+                    val groupTotal = groupItems.sumOf { it.value ?: 0.0 }
+                    Text(
+                        text = "${currencyFormat.format(groupTotal)}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
             }
             items(groupItems) { item ->
                 BalanceSheetItemCard(
