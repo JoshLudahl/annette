@@ -36,6 +36,7 @@ import com.softklass.annette.feature.budget.ui.screens.BudgetEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,7 @@ fun AddBudgetItemBottomSheet(
     var dueDateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
 
     val dateFormatter = remember {
-        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply { timeZone = TimeZone.getTimeZone("UTC") }
     }
 
     Column(
