@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softklass.annette.data.database.dao.BalanceSheetDao
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
-import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.dao.HistoricalEntry
+import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,14 +97,14 @@ class LiabilitiesViewModel @Inject constructor(
         _showAddDialog.value = false
     }
 
-    fun addLiability(name: String, amount: Double, category: String) {
+    fun addLiability(name: String, amount: Double, category: String, date: Long) {
         viewModelScope.launch {
             val liability = BalanceSheetItem(
                 name = name,
                 category = category,
-                type = "liability"
+                type = "liability",
             )
-            balanceSheetDao.insertBalanceSheetItemWithValue(liability, amount)
+            balanceSheetDao.insertBalanceSheetItemWithValue(liability, amount, date)
             hideAddDialog()
         }
     }

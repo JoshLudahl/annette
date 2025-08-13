@@ -1,6 +1,7 @@
 package com.softklass.annette.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,17 +13,24 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.Category
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Title
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,16 +45,29 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.softklass.annette.amountFormatted
 import com.softklass.annette.data.model.BalanceSheetType
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBalanceSheetItemDialog(
     onDismiss: () -> Unit,
-    onAddItem: (String, Double, String) -> Unit,
+    onAddItem: (String, Double, String, Long) -> Unit, // Added Long for date
     type: BalanceSheetType
 ) {
     var name by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableLongStateOf(Calendar.getInstance().timeInMillis) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate)
+    val dateFormatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -82,11 +103,13 @@ fun AddBalanceSheetItemDialog(
                             imeAction = ImeAction.Next,
                             capitalization = KeyboardCapitalization.Sentences,
                         ),
-                    leadingIcon = { Icon(
-                        imageVector = Icons.Rounded.Title,
-                        contentDescription = "Title",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Title,
+                            contentDescription = "Title",
 
-                    ) },
+                            )
+                    },
                 )
 
                 OutlinedTextField(
@@ -102,7 +125,12 @@ fun AddBalanceSheetItemDialog(
                     ),
                     maxLines = 1,
                     singleLine = true,
-                    leadingIcon = { Icon(Icons.Rounded.AttachMoney, contentDescription = "Amount") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Rounded.AttachMoney,
+                            contentDescription = "Amount"
+                        )
+                    },
                 )
 
                 OutlinedTextField(
@@ -114,11 +142,53 @@ fun AddBalanceSheetItemDialog(
                     placeholder = { Text("e.g., Real Estate, Cash, Investments") },
                     keyboardOptions =
                         KeyboardOptions(
-                            imeAction = ImeAction.Done,
+                            imeAction = ImeAction.Next, // Changed from Done to Next
                             capitalization = KeyboardCapitalization.Sentences,
                         ),
-                    leadingIcon = { Icon(Icons.Rounded.Category, contentDescription = "Category")},
+                    leadingIcon = { Icon(Icons.Rounded.Category, contentDescription = "Category") },
                 )
+
+                OutlinedTextField(
+                    value = dateFormatter.format(Date(selectedDate)),
+                    onValueChange = { /* Read-only */ },
+                    label = { Text("Date") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDatePicker = true },
+                    enabled = false, // To make it non-editable but clickable
+                    colors = OutlinedTextFieldDefaults.colors(
+                        // Ensure it looks enabled
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                    leadingIcon = { Icon(Icons.Rounded.DateRange, contentDescription = "Date") },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
+
+                if (showDatePicker) {
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePicker = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                datePickerState.selectedDateMillis?.let {
+                                    selectedDate = it
+                                }
+                                showDatePicker = false
+                            }) {
+                                Text("OK")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker = false }) {
+                                Text("Cancel")
+                            }
+                        }
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
+                }
 
                 val errorMessage = remember { mutableStateOf(false) }
 
@@ -146,7 +216,13 @@ fun AddBalanceSheetItemDialog(
                             if (name.isNotBlank() && amount.isNotBlank() && category.isNotBlank()) {
                                 val amountDouble = amount.toDoubleOrNull()
                                 if (amountDouble != null && amountDouble > 0) {
-                                    onAddItem(name.trim(), amountDouble, category.trim())
+                                    // Pass selectedDate to onAddItem
+                                    onAddItem(
+                                        name.trim(),
+                                        amountDouble,
+                                        category.trim(),
+                                        selectedDate
+                                    )
                                 } else {
                                     Log.e("AddItemDialog", "Invalid amount: $amount")
                                     errorMessage.value = true
@@ -159,6 +235,7 @@ fun AddBalanceSheetItemDialog(
                                 errorMessage.value = true
                             }
                         },
+                        // The button is enabled if all fields are filled, date is always selected by default
                         enabled = name.isNotBlank() && amount.isNotBlank() && category.isNotBlank()
                     ) {
                         Text("Add")

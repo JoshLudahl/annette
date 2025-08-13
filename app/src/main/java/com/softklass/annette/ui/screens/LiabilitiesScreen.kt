@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
 import com.softklass.annette.ui.components.BalanceSheetHeaderCard
@@ -159,8 +158,8 @@ fun LiabilitiesScreen(
     if (showAddDialog) {
         AddBalanceSheetItemDialog(
             onDismiss = { viewModel.hideAddDialog() },
-            onAddItem = { name: String, amount: Double, category: String ->
-                viewModel.addLiability(name, amount, category)
+            onAddItem = { name: String, amount: Double, category: String, date: Long ->
+                viewModel.addLiability(name, amount, category, date)
             },
             type = BalanceSheetType.LIABILITIES
         )

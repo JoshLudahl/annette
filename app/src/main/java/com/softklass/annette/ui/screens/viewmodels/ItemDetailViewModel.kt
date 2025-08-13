@@ -55,12 +55,13 @@ class ItemDetailViewModel @Inject constructor(
         _showAddValueDialog.value = false
     }
 
-    fun addValue(value: Double) {
+    fun addValue(value: Double, date: Long) {
         viewModelScope.launch {
             _item.value?.let { item ->
                 val balanceSheetValue = BalanceSheetValues(
                     parentId = item.id,
-                    value = value
+                    value = value,
+                    date = date
                 )
                 balanceSheetDao.insertBalanceSheetValue(balanceSheetValue)
                 hideAddValueDialog()

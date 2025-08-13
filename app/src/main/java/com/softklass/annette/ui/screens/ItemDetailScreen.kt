@@ -1,6 +1,7 @@
 package com.softklass.annette.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,12 +19,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
@@ -31,10 +35,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -56,6 +63,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -175,7 +183,7 @@ fun ItemDetailScreen(
     if (showAddValueDialog) {
         AddValueDialog(
             onDismiss = { viewModel.hideAddValueDialog() },
-            onAddValue = { amount -> viewModel.addValue(amount) }
+            onAddValue = { amount, date -> viewModel.addValue(amount, date) } // Updated lambda
         )
     }
 
@@ -257,7 +265,9 @@ fun HistoricalValueItem(
     onLongClick: () -> Unit
 ) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
 
     Card(
         modifier = Modifier
@@ -297,12 +307,25 @@ fun HistoricalValueItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddValueDialog(
     onDismiss: () -> Unit,
-    onAddValue: (Double) -> Unit
+    onAddValue: (Double, Long) -> Unit
 ) {
     var valueText by remember { mutableStateOf("") }
+    val datePickerState =
+        rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
+    var showDatePickerDialog by remember { mutableStateOf(false) }
+    var selectedDateMillis by remember {
+        mutableStateOf(
+            datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+        )
+    }
+
+    val dateFormat = remember { SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    } }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -313,7 +336,8 @@ fun AddValueDialog(
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Update Value",
@@ -329,6 +353,48 @@ fun AddValueDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                OutlinedTextField(
+                    value = dateFormat.format(Date(selectedDateMillis)),
+                    onValueChange = { /* Read-only */ },
+                    label = { Text("Date") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDatePickerDialog = true },
+                    enabled = false, // To make it non-editable but clickable
+                    colors = OutlinedTextFieldDefaults.colors(
+                        // Ensure it looks enabled
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                    leadingIcon = { Icon(Icons.Rounded.DateRange, contentDescription = "Date") },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
+
+                if (showDatePickerDialog) {
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePickerDialog = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                datePickerState.selectedDateMillis?.let {
+                                    selectedDateMillis = it
+                                }
+                                showDatePickerDialog = false
+                            }) {
+                                Text("OK")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePickerDialog = false }) {
+                                Text("Cancel")
+                            }
+                        }
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
+                }
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -340,15 +406,36 @@ fun AddValueDialog(
                     Button(
                         onClick = {
                             valueText.toDoubleOrNull()?.let { amount ->
-                                onAddValue(amount)
+                                onAddValue(amount, selectedDateMillis)
                             }
                         },
-                        enabled = valueText.toDoubleOrNull() != null
+                        enabled = valueText.toDoubleOrNull() != null && selectedDateMillis > 0
                     ) {
                         Text("Add")
                     }
                 }
             }
+        }
+    }
+
+    if (showDatePickerDialog) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePickerDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            selectedDateMillis = millis
+                        }
+                        showDatePickerDialog = false
+                    }
+                ) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePickerDialog = false }) { Text("Cancel") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 }

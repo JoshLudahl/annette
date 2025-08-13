@@ -32,6 +32,7 @@ import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.annette.ui.components.AddBalanceSheetItemDialog
 import com.softklass.annette.ui.components.BalanceSheetHeaderCard
 import com.softklass.annette.ui.components.BalanceSheetItemList
+import com.softklass.annette.ui.components.ConfirmDeleteItemDialog
 import com.softklass.annette.ui.components.EmptyBalanceSheetListCard
 import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
@@ -156,8 +157,8 @@ fun AssetsScreen(
         if (showAddDialog) {
             AddBalanceSheetItemDialog(
                 onDismiss = { viewModel.hideAddDialog() },
-                onAddItem = { name, amount, category ->
-                    viewModel.addAsset(name, amount, category)
+                onAddItem = { name, amount, category, date -> // Added date parameter
+                    viewModel.addAsset(name, amount, category, date) // Pass date to ViewModel
                 },
                 type = BalanceSheetType.ASSETS
             )
@@ -166,7 +167,7 @@ fun AssetsScreen(
         // Delete confirm dialog
         val pendingDelete = itemToDelete
         if (pendingDelete != null) {
-            com.softklass.annette.ui.components.ConfirmDeleteItemDialog(
+            ConfirmDeleteItemDialog(
                 itemName = pendingDelete.name,
                 onDismiss = { itemToDelete = null },
                 onConfirmDelete = {

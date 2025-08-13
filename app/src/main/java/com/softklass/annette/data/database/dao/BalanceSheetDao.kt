@@ -43,11 +43,12 @@ interface BalanceSheetDao {
     suspend fun getLatestBalanceSheetValue(itemId: Long): BalanceSheetValues?
 
     @Transaction
-    suspend fun insertBalanceSheetItemWithValue(item: BalanceSheetItem, amount: Double): Long {
+    suspend fun insertBalanceSheetItemWithValue(item: BalanceSheetItem, amount: Double, date: Long): Long {
         val itemId = insertBalanceSheetItem(item)
         val value = BalanceSheetValues(
             parentId = itemId,
-            value = amount
+            value = amount,
+            date = date
         )
         insertBalanceSheetValue(value)
         return itemId
