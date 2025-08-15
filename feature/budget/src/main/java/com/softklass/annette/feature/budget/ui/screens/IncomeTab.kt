@@ -77,11 +77,23 @@ fun ListContent(list: List<BudgetEntity>) {
             BudgetListItem(
                 emoji = " D ",
                 label = item.name,
-                date = item.dueDateMillis.toString(),
+                date = formatDate(item.dueDateMillis),
                 amount = item.amount.toString(),
                 category = item.category
             )
         }
+    }
+}
+
+private fun formatDate(millis: Long): String {
+    return try {
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy")
+        java.time.Instant.ofEpochMilli(millis)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDate()
+            .format(formatter)
+    } catch (e: Exception) {
+        millis.toString()
     }
 }
 

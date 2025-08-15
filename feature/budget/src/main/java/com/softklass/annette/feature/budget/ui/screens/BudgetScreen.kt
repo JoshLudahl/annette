@@ -122,7 +122,7 @@ fun BudgetScreenHost(
 ) {
     when (state) {
         0 -> DashboardTabContent()
-        1 -> ExpensesTabContent()
+        1 -> ExpensesTabContent(viewModel = viewModel)
         2 -> IncomeTabContent(viewModel = viewModel)
         else -> throw NoSuchElementException()
     }
