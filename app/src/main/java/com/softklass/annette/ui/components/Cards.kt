@@ -85,33 +85,6 @@ fun BalanceSheetHeaderCard(
                 BalanceSheetType.LIABILITIES -> "Liabilities"
             }
 
-//        Column(
-//            modifier = Modifier
-//                .padding(20.dp)
-//                .fillMaxWidth(),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//            val label = when (type) {
-//                BalanceSheetType.ASSETS -> "Assets"
-//                BalanceSheetType.LIABILITIES -> "Liabilities"
-//            }
-//
-//            Text(
-//                text = "Total $label",
-//                fontSize = 20.sp,
-//                fontWeight = FontWeight.Medium,
-//                color = colors.second
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(
-//                text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
-//                fontSize = 32.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = colors.second
-//            )
-//        }
-
         Row(
             modifier = Modifier
                 .padding(20.dp)
@@ -131,22 +104,30 @@ fun BalanceSheetHeaderCard(
                     onClickIcon = onClickIcon
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = label,
-
-                )
             }
 
             Spacer(modifier = Modifier.weight(1f))
             // Value text
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+
+
             Text(
                 text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
                 textAlign = TextAlign.End,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 32.sp
+                fontSize = 28.sp
             )
+            Text(
+                text = "Total $label",
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            )
+        }
         }
     }
 }
