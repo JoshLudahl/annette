@@ -3,11 +3,11 @@ package com.softklass.annette.ui.components
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,8 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.currencyFormatter
@@ -58,10 +60,12 @@ import java.util.Locale
 fun BalanceSheetHeaderCard(
     items: List<BalanceSheetItemWithValue>,
     type: BalanceSheetType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    onClickIcon: () -> Unit
 ) {
     val colors: Pair<Color, Color> = when (type) {
-        BalanceSheetType.ASSETS -> ExtendedTheme.colors.asset.colorContainer to ExtendedTheme.colors.asset.onColorContainer
+        BalanceSheetType.ASSETS -> ExtendedTheme.colors.asset.color to ExtendedTheme.colors.asset.onColor
         BalanceSheetType.LIABILITIES -> ExtendedTheme.colors.liability.colorContainer to ExtendedTheme.colors.liability.onColorContainer
     }
 
@@ -69,35 +73,79 @@ fun BalanceSheetHeaderCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+
         colors = CardDefaults.cardColors(
-            containerColor = colors.first
-        )
+            containerColor = colors.first.copy(alpha = 0.4f),
+        ),
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            val label = when (type) {
+
+        val label = when (type) {
                 BalanceSheetType.ASSETS -> "Assets"
                 BalanceSheetType.LIABILITIES -> "Liabilities"
             }
 
-            Text(
-                text = "Total $label",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = colors.second
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+//        Column(
+//            modifier = Modifier
+//                .padding(20.dp)
+//                .fillMaxWidth(),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            val label = when (type) {
+//                BalanceSheetType.ASSETS -> "Assets"
+//                BalanceSheetType.LIABILITIES -> "Liabilities"
+//            }
+//
+//            Text(
+//                text = "Total $label",
+//                fontSize = 20.sp,
+//                fontWeight = FontWeight.Medium,
+//                color = colors.second
+//            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text(
+//                text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
+//                fontSize = 32.sp,
+//                fontWeight = FontWeight.Bold,
+//                color = colors.second
+//            )
+//        }
+
+        Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            // Icon and title text
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                RoundedIconDisplay(
+                    icon = icon,
+                    iconContainerColor = colors.first,
+                    iconContentColor = colors.second,
+                    onClickIcon = onClickIcon
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = label,
+
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            // Value text
             Text(
                 text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = colors.second
+                textAlign = TextAlign.End,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 32.sp
             )
         }
     }
@@ -141,9 +189,18 @@ fun BalanceSheetItemCard(
 ) {
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+    val itemColor = when (item.type) {
+        "asset" -> ExtendedTheme.colors.asset.colorContainer
+        "liability" -> ExtendedTheme.colors.liability.colorContainer
+        else -> ExtendedTheme.colors.asset.colorContainer
+    }
 
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSecondary
+        ),
+        shape = RoundedCornerShape(20.dp),
         onClick = onClick
     ) {
         Row(
@@ -161,14 +218,14 @@ fun BalanceSheetItemCard(
                 modifier = Modifier
                     .size(65.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                    .background(color = itemColor.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = resolveIconForCategory(item.category),
                     contentDescription = null,
                     modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = itemColor
                 )
             }
 
@@ -195,7 +252,8 @@ fun BalanceSheetItemCard(
                 text = currencyFormat.format(item.value ?: 0.0),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(end = 16.dp)
             )
         }
     }
@@ -319,6 +377,36 @@ fun ValueCard(
                 color = textColor.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun BalanceSheetRoundedCardContainer(
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxSize()
+            // Apply clipping to the Card itself
+            .clip(
+                RoundedCornerShape(
+                    topStart = 24.dp, // Adjust the radius as needed
+                    topEnd = 24.dp,   // Adjust the radius as needed
+                    bottomStart = 0.dp,
+                    bottomEnd = 0.dp
+                )
+            ),
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(
+            containerColor = ExtendedTheme.colors.asset.colorContainer.copy(alpha = 0.2f),
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            content()
         }
     }
 }

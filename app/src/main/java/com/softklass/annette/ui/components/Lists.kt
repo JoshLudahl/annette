@@ -24,11 +24,14 @@ fun BalanceSheetItemList(
 ) {
     val grouped = items.groupBy { it.category }
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(top = 16.dp)
     ) {
         grouped.forEach { (category, groupItems) ->
             item {
-                Row {
+                Row(
+                    modifier = Modifier.padding(start = 24.dp, end = 16.dp)
+                ) {
                     Text(
                         text = category,
                         fontSize = 18.sp,
