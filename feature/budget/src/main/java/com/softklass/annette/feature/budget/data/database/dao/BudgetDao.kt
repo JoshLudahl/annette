@@ -34,6 +34,16 @@ interface BudgetDao {
     @Query("SELECT * FROM budget_value WHERE parentId = :parentId")
     fun getBudgetValuesByParentId(parentId: Long): Flow<List<BudgetValue>>
 
+    // Sum helpers for Income/Expense totals
+    @Query(
+        """
+        SELECT COALESCE(SUM(bv.value), 0) FROM budget_item bi
+        JOIN budget_value bv ON bi.id = bv.parentId
+        WHERE bi.type = :type
+        """
+    )
+    fun getTotalValueByType(type: String): Flow<Double?>
+
     @Query("DELETE FROM budget_value WHERE parentId = :parentId")
     fun deleteAllBudgetValuesByParentId(parentId: Long)
 

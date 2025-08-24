@@ -8,12 +8,23 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.softklass.annette.data.preferences.SettingsPreferences
+
+@Immutable
+data class ExtendedColorScheme(
+    val bright: ColorFamily,
+    val blackboard: ColorFamily,
+    val liability: ColorFamily,
+    val asset: ColorFamily,
+    val cta: ColorFamily,
+)
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -243,6 +254,206 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+
+val extendedLight = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightLight,
+        onBrightLight,
+        brightContainerLight,
+        onBrightContainerLight,
+    ),
+    blackboard = ColorFamily(
+        blackboardLight,
+        onBlackboardLight,
+        blackboardContainerLight,
+        onBlackboardContainerLight,
+    ),
+    liability = ColorFamily(
+        liabilityLight,
+        onLiabilityLight,
+        liabilityContainerLight,
+        onLiabilityContainerLight,
+    ),
+    asset = ColorFamily(
+        assetLight,
+        onAssetLight,
+        assetContainerLight,
+        onAssetContainerLight,
+    ),
+    cta = ColorFamily(
+        ctaLight,
+        onCtaLight,
+        ctaContainerLight,
+        onCtaContainerLight,
+    ),
+)
+
+val extendedDark = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightDark,
+        onBrightDark,
+        brightContainerDark,
+        onBrightContainerDark,
+    ),
+    blackboard = ColorFamily(
+        blackboardDark,
+        onBlackboardDark,
+        blackboardContainerDark,
+        onBlackboardContainerDark,
+    ),
+    liability = ColorFamily(
+        liabilityDark,
+        onLiabilityDark,
+        liabilityContainerDark,
+        onLiabilityContainerDark,
+    ),
+    asset = ColorFamily(
+        assetDark,
+        onAssetDark,
+        assetContainerDark,
+        onAssetContainerDark,
+    ),
+    cta = ColorFamily(
+        ctaDark,
+        onCtaDark,
+        ctaContainerDark,
+        onCtaContainerDark,
+    ),
+)
+
+val extendedLightMediumContrast = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightLightMediumContrast,
+        onBrightLightMediumContrast,
+        brightContainerLightMediumContrast,
+        onBrightContainerLightMediumContrast,
+    ),
+    blackboard = ColorFamily(
+        blackboardLightMediumContrast,
+        onBlackboardLightMediumContrast,
+        blackboardContainerLightMediumContrast,
+        onBlackboardContainerLightMediumContrast,
+    ),
+    liability = ColorFamily(
+        liabilityLightMediumContrast,
+        onLiabilityLightMediumContrast,
+        liabilityContainerLightMediumContrast,
+        onLiabilityContainerLightMediumContrast,
+    ),
+    asset = ColorFamily(
+        assetLightMediumContrast,
+        onAssetLightMediumContrast,
+        assetContainerLightMediumContrast,
+        onAssetContainerLightMediumContrast,
+    ),
+    cta = ColorFamily(
+        ctaLightMediumContrast,
+        onCtaLightMediumContrast,
+        ctaContainerLightMediumContrast,
+        onCtaContainerLightMediumContrast,
+    ),
+)
+
+val extendedLightHighContrast = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightLightHighContrast,
+        onBrightLightHighContrast,
+        brightContainerLightHighContrast,
+        onBrightContainerLightHighContrast,
+    ),
+    blackboard = ColorFamily(
+        blackboardLightHighContrast,
+        onBlackboardLightHighContrast,
+        blackboardContainerLightHighContrast,
+        onBlackboardContainerLightHighContrast,
+    ),
+    liability = ColorFamily(
+        liabilityLightHighContrast,
+        onLiabilityLightHighContrast,
+        liabilityContainerLightHighContrast,
+        onLiabilityContainerLightHighContrast,
+    ),
+    asset = ColorFamily(
+        assetLightHighContrast,
+        onAssetLightHighContrast,
+        assetContainerLightHighContrast,
+        onAssetContainerLightHighContrast,
+    ),
+    cta = ColorFamily(
+        ctaLightHighContrast,
+        onCtaLightHighContrast,
+        ctaContainerLightHighContrast,
+        onCtaContainerLightHighContrast,
+    ),
+)
+
+val extendedDarkMediumContrast = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightDarkMediumContrast,
+        onBrightDarkMediumContrast,
+        brightContainerDarkMediumContrast,
+        onBrightContainerDarkMediumContrast,
+    ),
+    blackboard = ColorFamily(
+        blackboardDarkMediumContrast,
+        onBlackboardDarkMediumContrast,
+        blackboardContainerDarkMediumContrast,
+        onBlackboardContainerDarkMediumContrast,
+    ),
+    liability = ColorFamily(
+        liabilityDarkMediumContrast,
+        onLiabilityDarkMediumContrast,
+        liabilityContainerDarkMediumContrast,
+        onLiabilityContainerDarkMediumContrast,
+    ),
+    asset = ColorFamily(
+        assetDarkMediumContrast,
+        onAssetDarkMediumContrast,
+        assetContainerDarkMediumContrast,
+        onAssetContainerDarkMediumContrast,
+    ),
+    cta = ColorFamily(
+        ctaDarkMediumContrast,
+        onCtaDarkMediumContrast,
+        ctaContainerDarkMediumContrast,
+        onCtaContainerDarkMediumContrast,
+    ),
+)
+
+val extendedDarkHighContrast = ExtendedColorScheme(
+    bright = ColorFamily(
+        brightDarkHighContrast,
+        onBrightDarkHighContrast,
+        brightContainerDarkHighContrast,
+        onBrightContainerDarkHighContrast,
+    ),
+    blackboard = ColorFamily(
+        blackboardDarkHighContrast,
+        onBlackboardDarkHighContrast,
+        blackboardContainerDarkHighContrast,
+        onBlackboardContainerDarkHighContrast,
+    ),
+    liability = ColorFamily(
+        liabilityDarkHighContrast,
+        onLiabilityDarkHighContrast,
+        liabilityContainerDarkHighContrast,
+        onLiabilityContainerDarkHighContrast,
+    ),
+    asset = ColorFamily(
+        assetDarkHighContrast,
+        onAssetDarkHighContrast,
+        assetContainerDarkHighContrast,
+        onAssetContainerDarkHighContrast,
+    ),
+    cta = ColorFamily(
+        ctaDarkHighContrast,
+        onCtaDarkHighContrast,
+        ctaContainerDarkHighContrast,
+        onCtaContainerDarkHighContrast,
+    ),
+)
+
+
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -271,6 +482,7 @@ fun AnnetteTheme(
             val prefValue by settingsPreferences.dynamicColorEnabled.collectAsState(initial = true)
             prefValue
         }
+
         else -> true
     }
 
@@ -284,6 +496,7 @@ fun AnnetteTheme(
                 ThemeMode.SYSTEM -> darkTheme
             }
         }
+
         else -> darkTheme
     }
 
@@ -298,9 +511,39 @@ fun AnnetteTheme(
         else -> lightScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AppTypography,
-        content = content,
-    )
+
+
+    val currentExtendedColorScheme = when {
+        // You could also have dynamic extended colors if you generate them based on Material You
+        // For now, using the predefined ones:
+        useDarkTheme -> {
+            // Here you'd select between extendedDark, extendedDarkMediumContrast, extendedDarkHighContrast
+            // For simplicity, I'll pick extendedDark. You'll need to add logic for contrast.
+            extendedDark // Or extendedDarkMediumContrast, extendedDarkHighContrast
+        }
+
+        else -> {
+            // Similarly for light themes
+            extendedLight // Or extendedLightMediumContrast, extendedLightHighContrast
+        }
+    }
+
+    CompositionLocalProvider(LocalExtendedColors provides currentExtendedColorScheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            content = content,
+        )
+    }
+}
+
+val LocalExtendedColors = staticCompositionLocalOf {
+    extendedLight
+    extendedDark
+}
+
+object ExtendedTheme {
+    val colors: ExtendedColorScheme
+        @Composable
+        get() = LocalExtendedColors.current
 }
