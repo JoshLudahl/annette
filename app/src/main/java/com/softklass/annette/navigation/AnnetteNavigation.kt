@@ -1,5 +1,6 @@
 package com.softklass.annette.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -91,7 +93,8 @@ fun AnnetteApp() {
                 navController = navController,
                 screens = screens
             )
-        }
+        },
+
     ) { innerPadding ->
         AnnetteNavHost(
             navController = navController,
@@ -109,7 +112,14 @@ fun AnnetteBottomNavigation(
     val currentDestination = navBackStackEntry?.destination
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        windowInsets =
+            WindowInsets(
+                left = 8.dp,
+                top = 0.dp,
+                right = 0.dp,
+                bottom = 16.dp,
+            ),
     ) {
         screens.forEach { screen ->
             NavigationBarItem(

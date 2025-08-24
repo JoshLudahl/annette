@@ -3,6 +3,7 @@ package com.softklass.annette.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,7 +35,7 @@ fun BalanceSheetItemList(
                 ) {
                     Text(
                         text = category,
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -45,7 +46,7 @@ fun BalanceSheetItemList(
                     val groupTotal = groupItems.sumOf { it.value ?: 0.0 }
                     Text(
                         text = "${currencyFormat.format(groupTotal)}",
-                        fontSize = 18.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -67,7 +68,9 @@ fun BalanceSheetItemList(
                         onLonPress(item)
                     }
                 )
+                Spacer(Modifier.height(16.dp))
             }
         }
+
     }
 }

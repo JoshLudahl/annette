@@ -380,7 +380,7 @@ fun BalanceSheetRoundedCardContainer(
             ),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
-            containerColor = ExtendedTheme.colors.asset.colorContainer.copy(alpha = 0.2f),
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.2f),
         )
     ) {
         Column(
