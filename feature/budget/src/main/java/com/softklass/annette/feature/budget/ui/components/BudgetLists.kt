@@ -158,7 +158,7 @@ fun BudgetLineItemRow(
                 )
                 Text(
                     text = category,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
