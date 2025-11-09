@@ -35,12 +35,13 @@ fun BudgetLineItemList(
     modifier: Modifier = Modifier,
     onItemClick: ((BudgetEntity) -> Unit)? = null,
 ) {
+    val groupedItems = items.groupBy { it.category }
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
-            items = items,
+            items = groupedItems.values.flatten(),
             key = { it.name + "|" + it.category + "|" + it.dueDateMillis },
             contentType = { _ -> "budgetItem" }
         ) { entity ->
