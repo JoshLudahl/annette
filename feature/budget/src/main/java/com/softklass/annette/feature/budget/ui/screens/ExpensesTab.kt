@@ -13,11 +13,9 @@ import com.softklass.annette.feature.budget.ui.components.BudgetLineItemList
 
 @Composable
 fun ExpensesTabContent(
-    viewModel: BudgetViewModel
+    viewModel: BudgetViewModel,
+    expenseItems: List<BudgetEntity>
 ) {
-    val lineItems = viewModel
-        .getBudgetEntitiesByType(BudgetItemType.EXPENSE)
-        .collectAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -25,6 +23,6 @@ fun ExpensesTabContent(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        BudgetLineItemList(items = lineItems.value)
+        BudgetLineItemList(items = expenseItems)
     }
 }

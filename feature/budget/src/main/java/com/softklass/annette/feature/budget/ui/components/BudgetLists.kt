@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +39,11 @@ fun BudgetLineItemList(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(items) { entity ->
+        items(
+            items = items,
+            key = { it.name + "|" + it.category + "|" + it.dueDateMillis },
+            contentType = { _ -> "budgetItem" }
+        ) { entity ->
             BudgetLineItemRow(
                 name = entity.name,
                 category = entity.category,
@@ -65,17 +70,25 @@ fun BudgetLineItemRow(
     onClick: (() -> Unit)? = null,
 ) {
     // Formatters local to feature module (avoid cross-module dependency)
-    val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US)
-    val dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
+    val currencyFormatter = remember {
+        NumberFormat.getCurrencyInstance(Locale.US)
+    }
+    val dateFormatter = remember {
+        DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault())
+    }
 
-    val dateText = Instant.ofEpochMilli(dateMillis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(dateFormatter)
+    val dateText = remember(dateMillis) {
+        Instant.ofEpochMilli(dateMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+            .format(dateFormatter)
+    }
 
     // Rounded icon letter from category (fallback to name first letter if needed)
-    val letter = (category.firstOrNull() ?: name.firstOrNull() ?: '•')
-        .uppercaseChar()
+    val letter = remember(name, category) {
+        (category.firstOrNull() ?: name.firstOrNull() ?: '•')
+            .uppercaseChar()
+    }
 
     Surface(
         modifier = modifier,

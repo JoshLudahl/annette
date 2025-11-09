@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,9 @@ fun BudgetScreen(
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
 
+    val incomeItems by viewModel.budgetIncomeItems.collectAsState()
+    val expenseItems by viewModel.budgetExpenseItems.collectAsState()
+
     Scaffold(
         bottomBar = { },
         floatingActionButton = {
@@ -90,7 +94,9 @@ fun BudgetScreen(
 
                 BudgetScreenHost(
                     state = state,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    lineItems = incomeItems,
+                    expenseItems = expenseItems
                 )
             }
 
@@ -118,12 +124,14 @@ fun BudgetScreen(
 @Composable
 fun BudgetScreenHost(
     state: Int,
-    viewModel: BudgetViewModel
+    viewModel: BudgetViewModel,
+    lineItems: List<BudgetEntity> = emptyList(),
+    expenseItems: List<BudgetEntity> = emptyList()
 ) {
     when (state) {
         0 -> DashboardTabContent()
-        1 -> ExpensesTabContent(viewModel = viewModel)
-        2 -> IncomeTabContent(viewModel = viewModel)
+        1 -> ExpensesTabContent(viewModel = viewModel, expenseItems = expenseItems)
+        2 -> IncomeTabContent(viewModel = viewModel, lineItems = lineItems)
         else -> throw NoSuchElementException()
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.softklass.annette.feature.budget.ui.components.BudgetLineItemList
@@ -14,9 +16,9 @@ import com.softklass.annette.feature.budget.ui.components.BudgetLineItemList
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun IncomeTabContent(
-    viewModel: BudgetViewModel
+    viewModel: BudgetViewModel,
+    lineItems: List<BudgetEntity>
 ) {
-    val lineItems = viewModel.budgetIncomeItems.collectAsState()
 
     Column(
         modifier = Modifier
@@ -24,7 +26,7 @@ fun IncomeTabContent(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        IncomeTabDetails(lineItems.value)
+        IncomeTabDetails(lineItems)
     }
 }
 

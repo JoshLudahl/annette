@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.softklass.annette.core.test.core-mergeDebugAndroidTestResources-31:/values-v30/values-v30.xml",
+            "outputFile": "com.softklass.annette.core.test.core-mergeDebugAndroidTestResources-29:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "/Users/joshy/.gradle/caches/9.0.0/transforms/39aa3f6382aee17064ac6083602075da/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "source": "/Users/joshy/.gradle/caches/9.2.0/transforms/7932332510731f120963daefe977b793/transformed/material3/res/values-v30/values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

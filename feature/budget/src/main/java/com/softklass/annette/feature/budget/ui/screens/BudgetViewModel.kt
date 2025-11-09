@@ -28,6 +28,14 @@ class BudgetViewModel @Inject constructor(
             initialValue = emptyList(),
         )
 
+    private val _budgetExpenseItems = getBudgetEntitiesByType(BudgetItemType.EXPENSE)
+    val budgetExpenseItems: StateFlow<List<BudgetEntity>>
+        get() = _budgetExpenseItems.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList(),
+        )
+
     fun addBudgetItem(entity: BudgetEntity) {
         val budgetItem = BudgetItem(
             name = entity.name,
