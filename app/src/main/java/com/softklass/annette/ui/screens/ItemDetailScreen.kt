@@ -95,8 +95,16 @@ fun ItemDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(item?.name ?: "Item Detail") },
-                subtitle = { Text(item?.category ?: "Category") },
+                title = {
+                    Column {
+                        Text(item?.name ?: "Item Detail")
+                        Text(
+                            text = item?.category ?: "Category",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")

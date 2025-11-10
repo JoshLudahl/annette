@@ -14,14 +14,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,7 +39,7 @@ import com.softklass.annette.core.preferences.ThemeMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesScreen(
     onNavigateBack: () -> Unit = {},
@@ -116,42 +117,25 @@ fun PreferencesScreen(
                     val options = listOf("Default", "Dynamic")
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(ToggleButtonDefaults.IconSpacing),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        options.forEachIndexed { index, label ->
-
-                            ToggleButton(
-                                checked = if (dynamicColorEnabled && label == "Dynamic") {
-                                    true
-                                } else if (!dynamicColorEnabled && label == "Default") {
-                                    true
-                                } else {
-                                    false
-                                },
-                                onCheckedChange = {
-                                    scope.launch {
-                                        viewModel.setDynamicColorEnabled(!dynamicColorEnabled)
-                                    }
-                                },
-                                modifier = Modifier.weight(1f),
-
-                                shapes =
-                                    when (index) {
-                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                        options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                    },
-                            ) {
-                                if (dynamicColorEnabled && label == "Dynamic" || !dynamicColorEnabled && label == "Default") {
-                                    Icon(
-                                        Icons.Rounded.Done,
-                                        contentDescription = "Localized description",
-                                    )
-                                }
-
-                                Spacer(size(ToggleButtonDefaults.IconSpacing))
-
+                        options.forEach { label ->
+                            val selected = (dynamicColorEnabled && label == "Dynamic") || (!dynamicColorEnabled && label == "Default")
+                            val buttonContent: @Composable () -> Unit = {
                                 Text(label, maxLines = 1)
+                            }
+                            if (selected) {
+                                FilledTonalButton(
+                                    onClick = { /* no-op */ },
+                                ) { buttonContent() }
+                            } else {
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            viewModel.setDynamicColorEnabled(label == "Dynamic")
+                                        }
+                                    },
+                                ) { buttonContent() }
                             }
                         }
                     }
@@ -176,41 +160,20 @@ fun PreferencesScreen(
 
                 val options = listOf(ThemeMode.LIGHT, ThemeMode.DARK, ThemeMode.SYSTEM)
 
-                // ButtonGroup for Material 3 Expressive
-
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(ToggleButtonDefaults.IconSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    options.forEachIndexed { index, label ->
-                        ToggleButton(
-                            checked = themeMode == label,
-                            onCheckedChange = {
-                                scope.launch {
-                                    viewModel.setThemeMode(label)
-                                }
-                            },
-                            modifier = Modifier.weight(1f),
-
-                            shapes =
-                                when (index) {
-                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                    options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                },
-                        ) {
-                            if (themeMode == label) {
-                                Icon(
-                                    Icons.Rounded.Done,
-                                    contentDescription = "Localized description",
-                                )
+                    options.forEach { label ->
+                        val selected = themeMode == label
+                        val text = label.name.lowercase().replaceFirstChar { it.titlecaseChar() }
+                        if (selected) {
+                            FilledTonalButton(onClick = { /* no-op */ }) {
+                                Text(text, maxLines = 1)
                             }
-
-                            Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-
-                            Text(
-                                label.name.lowercase().replaceFirstChar { it.titlecaseChar() },
-                                maxLines = 1
-                            )
+                        } else {
+                            OutlinedButton(onClick = { scope.launch { viewModel.setThemeMode(label) } }) {
+                                Text(text, maxLines = 1)
+                            }
                         }
                     }
                 }
