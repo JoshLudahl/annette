@@ -129,7 +129,7 @@ fun BudgetScreenHost(
     expenseItems: List<BudgetEntity> = emptyList()
 ) {
     when (state) {
-        0 -> DashboardTabContent()
+        0 -> DashboardTabContent(viewModel)
         1 -> ExpensesTabContent(viewModel = viewModel, expenseItems = expenseItems)
         2 -> IncomeTabContent(viewModel = viewModel, lineItems = lineItems)
         else -> throw NoSuchElementException()

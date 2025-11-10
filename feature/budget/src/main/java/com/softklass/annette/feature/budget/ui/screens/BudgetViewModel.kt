@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,6 +36,25 @@ class BudgetViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList(),
         )
+
+    // Totals for dashboard
+    val totalIncome: StateFlow<Double> =
+        budgetDao.getTotalValueByType(BudgetItemType.INCOME.name)
+            .map { it ?: 0.0 }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = 0.0
+            )
+
+    val totalExpenses: StateFlow<Double> =
+        budgetDao.getTotalValueByType(BudgetItemType.EXPENSE.name)
+            .map { it ?: 0.0 }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = 0.0
+            )
 
     fun addBudgetItem(entity: BudgetEntity) {
         val budgetItem = BudgetItem(
