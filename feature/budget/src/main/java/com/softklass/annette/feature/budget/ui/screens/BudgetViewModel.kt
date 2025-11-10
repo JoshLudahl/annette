@@ -55,6 +55,23 @@ class BudgetViewModel @Inject constructor(
         }
     }
 
+    fun deleteBudgetItem(entity: BudgetEntity) {
+        // Resolve the DB row for this entity and delete it along with its values
+        viewModelScope.launch {
+            val item = budgetDao.getBudgetItem(
+                name = entity.name,
+                category = entity.category,
+                type = entity.type.name,
+                dueDateMillis = entity.dueDateMillis
+            )
+            if (item != null) {
+                // Delete child values then parent item
+                budgetDao.deleteAllBudgetValuesByParentId(item.id)
+                budgetDao.deleteBudgetItem(item)
+            }
+        }
+    }
+
     fun getBudgetEntitiesByType(type: BudgetItemType): Flow<List<BudgetEntity>> {
         val itemsFlow = budgetDao.getBudgetItemsByType(type.name)
         val valuesFlow = budgetDao.getAllBudgetValues()

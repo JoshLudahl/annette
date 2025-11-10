@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.softklass.annette.feature.budget.ui.components.BudgetLineItemList
@@ -26,13 +23,20 @@ fun IncomeTabContent(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        IncomeTabDetails(lineItems)
+        IncomeTabDetails(
+            lineItems = lineItems,
+            onDelete = { viewModel.deleteBudgetItem(it) }
+        )
     }
 }
 
 @Composable
 fun IncomeTabDetails(
-    lineItems: List<BudgetEntity>
+    lineItems: List<BudgetEntity>,
+    onDelete: ((BudgetEntity) -> Unit)? = null,
 ) {
-    BudgetLineItemList(items = lineItems)
+    BudgetLineItemList(
+        items = lineItems,
+        onItemDelete = onDelete
+    )
 }

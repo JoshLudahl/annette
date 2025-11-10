@@ -28,6 +28,18 @@ interface BudgetDao {
     @Query("SELECT * FROM budget_item WHERE name = :name LIMIT 1")
     suspend fun getBudgetItemByName(name: String): BudgetItem?
 
+    @Query("""
+        SELECT * FROM budget_item 
+        WHERE name = :name AND category = :category AND type = :type AND dueDate = :dueDateMillis 
+        LIMIT 1
+    """)
+    suspend fun getBudgetItem(
+        name: String,
+        category: String,
+        type: String,
+        dueDateMillis: Long
+    ): BudgetItem?
+
     @Query("SELECT * FROM budget_value")
     fun getAllBudgetValues(): Flow<List<BudgetValue>>
 
@@ -45,7 +57,7 @@ interface BudgetDao {
     fun getTotalValueByType(type: String): Flow<Double?>
 
     @Query("DELETE FROM budget_value WHERE parentId = :parentId")
-    fun deleteAllBudgetValuesByParentId(parentId: Long)
+    suspend fun deleteAllBudgetValuesByParentId(parentId: Long)
 
     @Query("DELETE FROM budget_item")
     fun deleteAllBudgetItems()

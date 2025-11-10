@@ -1,19 +1,30 @@
 package com.softklass.annette.feature.budget.ui.components
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetDialog(
-
+fun ConfirmDeleteBudgetItemDialog(
+    itemName: String,
+    onDismiss: () -> Unit,
+    onConfirmDelete: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = {  },
-        content = {
-            Text("Add Income")
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Delete item?", color = MaterialTheme.colorScheme.onSurface) },
+        text = { Text(text = "Delete '$itemName' and all its values? This action cannot be undone.") },
+        confirmButton = {
+            TextButton(onClick = onConfirmDelete) {
+                Text(text = "Delete", color = MaterialTheme.colorScheme.error)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Cancel")
+            }
         }
     )
 }

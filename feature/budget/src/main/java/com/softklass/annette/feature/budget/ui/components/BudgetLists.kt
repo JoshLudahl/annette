@@ -1,6 +1,8 @@
 package com.softklass.annette.feature.budget.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +33,20 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BudgetLineItemList(
     items: List<BudgetEntity>,
     modifier: Modifier = Modifier,
     onItemClick: ((BudgetEntity) -> Unit)? = null,
+    onItemDelete: ((BudgetEntity) -> Unit)? = null,
 ) {
     val groupedItems = items.groupBy { it.category }
+
+    // Dialog state for delete confirmation
+    val selectedItem = remember { mutableStateOf<BudgetEntity?>(null) }
+    val showDialog = remember { mutableStateOf(false) }
+
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -54,11 +64,33 @@ fun BudgetLineItemList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.surface)
+                    .combinedClickable(
+                        onClick = { onItemClick?.invoke(entity) },
+                        onLongClick = {
+                            selectedItem.value = entity
+                            showDialog.value = true
+                        }
+                    ),
                 onClick = { onItemClick?.invoke(entity) }
             )
         }
         item { Spacer(modifier = Modifier.height(4.dp)) }
+    }
+
+    if (showDialog.value && selectedItem.value != null) {
+        ConfirmDeleteBudgetItemDialog(
+            itemName = selectedItem.value!!.name,
+            onDismiss = {
+                showDialog.value = false
+                selectedItem.value = null
+            },
+            onConfirmDelete = {
+                onItemDelete?.invoke(selectedItem.value!!)
+                showDialog.value = false
+                selectedItem.value = null
+            }
+        )
     }
 }
 
