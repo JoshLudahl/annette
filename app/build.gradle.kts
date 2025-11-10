@@ -54,6 +54,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":theme"))
     implementation(project(":core"))
     implementation(project(":feature:budget"))
     implementation(libs.androidx.core.ktx)
@@ -73,7 +74,7 @@ dependencies {
 
     // ROOM
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.ui.text.google.fonts)
+
     ksp(libs.androidx.room.compiler)
 
     // DataStore

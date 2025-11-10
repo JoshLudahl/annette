@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.softklass.annette.core.preferences.SettingsPreferences
 import com.softklass.annette.core.preferences.ThemeMode
 import com.softklass.annette.navigation.AnnetteApp
-import com.softklass.annette.ui.theme.AnnetteTheme
+import com.softklass.theme.ui.theme.AnnetteTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
             val themeMode by settingsPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
             AnnetteTheme(
                 dynamicColorEnabled = dynamicColorEnabled,
-                themeMode = themeMode,
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

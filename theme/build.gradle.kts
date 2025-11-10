@@ -1,12 +1,17 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.softklass.theme"
     compileSdk {
         version = release(36)
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     defaultConfig {
@@ -53,6 +58,9 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.material3.android)
     implementation(libs.material)
+
+    implementation(libs.androidx.ui.text.google.fonts)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

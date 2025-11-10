@@ -508,9 +508,8 @@ fun AnnetteTheme(
     }
 }
 
-val LocalExtendedColors = staticCompositionLocalOf {
-    extendedLight
-    extendedDark
+val LocalExtendedColors = staticCompositionLocalOf<ExtendedColorScheme> {
+    error("No ExtendedColorScheme provided")
 }
 
 object ExtendedTheme {
