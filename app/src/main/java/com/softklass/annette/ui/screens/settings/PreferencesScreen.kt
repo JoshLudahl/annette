@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.material.color.DynamicColors
-import com.softklass.annette.ui.theme.ThemeMode
+import com.softklass.annette.core.preferences.ThemeMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

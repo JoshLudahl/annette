@@ -1,4 +1,4 @@
-package com.softklass.annette.ui.theme
+package com.softklass.theme.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,7 +13,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.softklass.annette.core.preferences.ThemeMode
 
 @Immutable
 data class ExtendedColorScheme(
@@ -469,16 +468,10 @@ fun AnnetteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColorEnabled: Boolean = true,
-    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content:
     @Composable () -> Unit,
 ) {
-    // Determine if dark theme should be used based on provided themeMode or system setting
-    val useDarkTheme = when (themeMode) {
-        ThemeMode.DARK -> true
-        ThemeMode.LIGHT -> false
-        ThemeMode.SYSTEM -> darkTheme
-    }
+    val useDarkTheme = darkTheme
 
     val colorScheme = when {
         // Disable this part to use the default colors

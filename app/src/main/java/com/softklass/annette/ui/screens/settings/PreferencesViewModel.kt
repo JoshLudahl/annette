@@ -1,8 +1,8 @@
 package com.softklass.annette.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
-import com.softklass.annette.data.preferences.SettingsPreferences
-import com.softklass.annette.ui.theme.ThemeMode
+import com.softklass.annette.core.preferences.SettingsPreferences
+import com.softklass.annette.core.preferences.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

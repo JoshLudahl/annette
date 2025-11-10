@@ -54,6 +54,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(project(":feature:budget"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

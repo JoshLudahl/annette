@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.softklass.annette.data.preferences.SettingsPreferences
+import com.softklass.annette.core.preferences.SettingsPreferences
+import com.softklass.annette.core.preferences.ThemeMode
 import com.softklass.annette.navigation.AnnetteApp
 import com.softklass.annette.ui.theme.AnnetteTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,8 +28,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val dynamicColorEnabled by settingsPreferences.dynamicColorEnabled.collectAsState(initial = true)
+            val themeMode by settingsPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
             AnnetteTheme(
-                settingsPreferences = settingsPreferences,
+                dynamicColorEnabled = dynamicColorEnabled,
+                themeMode = themeMode,
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

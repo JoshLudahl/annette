@@ -1,7 +1,7 @@
 package com.softklass.annette.di
 
 import android.content.Context
-import com.softklass.annette.data.preferences.SettingsPreferences
+import com.softklass.annette.core.preferences.SettingsPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
