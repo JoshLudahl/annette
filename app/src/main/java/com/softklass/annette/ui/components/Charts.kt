@@ -81,8 +81,14 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
                 startAxis = VerticalAxis.rememberStart(),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
-                        val index = value.toInt()
-                        if (index in xLabels.indices) xLabels[index] else ""
+                        // Vico forbids returning an empty string here. Coerce index within bounds and provide non-empty fallback.
+                        val safeLabels = xLabels
+                        if (safeLabels.isEmpty()) {
+                            "-"
+                        } else {
+                            val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
+                            safeLabels[index].ifBlank { "-" }
+                        }
                     }
                 ),
             ),
@@ -129,8 +135,14 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
                 startAxis = VerticalAxis.rememberStart(),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
-                        val index = value.toInt()
-                        if (index in xLabels.indices) xLabels[index] else ""
+                        // Ensure non-empty label per Vico requirements
+                        val safeLabels = xLabels
+                        if (safeLabels.isEmpty()) {
+                            "-"
+                        } else {
+                            val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
+                            safeLabels[index].ifBlank { "-" }
+                        }
                     }
                 ),
             ),
