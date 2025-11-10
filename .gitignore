@@ -17,4 +17,4 @@
 .idea
 /.idea/
 /.kotlin/
-**/build
+/**/build
