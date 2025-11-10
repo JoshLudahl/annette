@@ -58,6 +58,7 @@ dependencies {
     // ROOM
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.androidx.room.compiler)
 
     // HILT

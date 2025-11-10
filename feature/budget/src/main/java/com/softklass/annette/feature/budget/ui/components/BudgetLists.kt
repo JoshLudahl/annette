@@ -1,5 +1,6 @@
 package com.softklass.annette.feature.budget.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -48,7 +49,7 @@ fun BudgetLineItemList(
     val showDialog = remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
