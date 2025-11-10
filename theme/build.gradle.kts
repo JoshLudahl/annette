@@ -44,8 +44,6 @@ kotlin {
 dependencies {
     implementation(libs.androidx.core.ktx)
 
-    implementation(project(":core"))
-
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

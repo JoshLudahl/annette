@@ -24,36 +24,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.core.ui.currency.currencyFormatter
+import com.softklass.theme.ui.theme.ExtendedTheme
 
-//@Composable
-//fun DisplayIncomeExpenseCards(
-//    income: Double,
-//    expense: Double
-//) {
-//    Row(
-//        modifier = Modifier.fillMaxWidth(),
-//        horizontalArrangement = Arrangement.spacedBy(12.dp)
-//    ) {
-//        com.softklass.annette.ui.components.ValueCard(
-//            totalAssets = income,
-//            title = "Income",
-//            textColor = ExtendedTheme.colors.blackboard.color,
-//            modifier = Modifier.weight(1f),
-//            icon = Icons.Rounded.AccountBalance,
-//            iconBackgroundColor = ExtendedTheme.colors.asset.colorContainer,
-//            onCardClick = { /* Handle income card click */ }
-//        )
-//        com.softklass.annette.ui.components.ValueCard(
-//            totalAssets = expense,
-//            title = "Expense",
-//            textColor = ExtendedTheme.colors.blackboard.color,
-//            modifier = Modifier.weight(1f),
-//            icon = Icons.Rounded.AccountBalanceWallet,
-//            iconBackgroundColor = ExtendedTheme.colors.liability.colorContainer,
-//            onCardClick = { /* Handle expense card click */ }
-//        )
-//    }
-//}
+@Composable
+fun DisplayIncomeExpenseCards(
+    income: Double,
+    expense: Double
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        ValueCard(
+            totalAssets = income,
+            title = "Income",
+            textColor = ExtendedTheme.colors.blackboard.color,
+            modifier = Modifier.weight(1f),
+            icon = Icons.Rounded.AccountBalance,
+            iconBackgroundColor = ExtendedTheme.colors.asset.colorContainer,
+            onCardClick = { /* Handle income card click */ }
+        )
+        ValueCard(
+            totalAssets = expense,
+            title = "Expense",
+            textColor = ExtendedTheme.colors.blackboard.color,
+            modifier = Modifier.weight(1f),
+            icon = Icons.Rounded.AccountBalanceWallet,
+            iconBackgroundColor = ExtendedTheme.colors.liability.colorContainer,
+            onCardClick = { /* Handle expense card click */ }
+        )
+    }
+}
 
 @Composable
 fun ValueCard(

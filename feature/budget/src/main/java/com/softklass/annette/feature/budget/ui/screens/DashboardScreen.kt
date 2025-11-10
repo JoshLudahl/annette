@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.atan2
@@ -67,10 +68,9 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Cash section boxes (without the "Cash" label)
-        IncomeExpenseBoxes(
+        DisplayIncomeExpenseCards(
             income = income,
             expense = expenses,
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
