@@ -21,6 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
+import com.softklass.annette.core.ui.composables.RoundedIconDisplay
+import com.softklass.annette.core.ui.currency.currencyFormatter
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.atan2
@@ -57,10 +60,57 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
             .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Small info section above the donut styled like a compact ValueCard (neutral)
+        val net = income - expenses
+        Box(
+            modifier = Modifier.padding(
+                top = 12.dp,
+                bottom = 20.dp,
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    RoundedIconDisplay(
+                        icon = Icons.Rounded.Info,
+                        iconContainerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f),
+                        iconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        onClickIcon = { }
+                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = currencyFormatter.format(net),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            text = "Income − Expenses",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        }
+
         ExpenseIncomeDonut(
             income = income,
             expenses = expenses,
-            modifier = Modifier.size(220.dp)
+            modifier = Modifier.size(220.dp).padding(bottom = 20.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
