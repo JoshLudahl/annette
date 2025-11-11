@@ -509,7 +509,10 @@ fun AnnetteTheme(
 }
 
 val LocalExtendedColors = staticCompositionLocalOf<ExtendedColorScheme> {
-    error("No ExtendedColorScheme provided")
+    // Provide a safe default to avoid runtime crashes when a provider isn't set.
+    // This mirrors the app module's behavior and ensures core/feature UIs can access colors
+    // even if not wrapped by this module's AnnetteTheme.
+    extendedLight
 }
 
 object ExtendedTheme {
