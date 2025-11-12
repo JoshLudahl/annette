@@ -39,6 +39,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":theme"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

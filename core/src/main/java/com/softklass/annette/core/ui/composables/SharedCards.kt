@@ -1,6 +1,7 @@
 package com.softklass.annette.core.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.softklass.annette.core.model.Budget
 import com.softklass.annette.core.ui.currency.currencyFormatter
 import com.softklass.theme.ui.theme.ExtendedTheme
 
@@ -102,6 +105,58 @@ fun ValueCard(
                 color = textColor.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun BudgetInfoHeader(
+    total: Double,
+    type: Budget
+) {
+    val item = when (type) {
+        Budget.INCOME -> "Income" to ExtendedTheme.colors.asset.colorContainer
+        Budget.EXPENSE -> "Expense" to ExtendedTheme.colors.liability.colorContainer
+    }
+    Box(modifier = Modifier.padding(top = 4.dp)) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = item.second.copy(alpha = 0.2f)
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                RoundedIconDisplay(
+                    icon = Icons.Rounded.AccountBalance,
+                    iconContainerColor = item.second,
+                    onClickIcon = { }
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = currencyFormatter.format(total),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        text = "Total ${item.first}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }

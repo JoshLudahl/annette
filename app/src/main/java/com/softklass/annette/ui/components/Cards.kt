@@ -349,14 +349,16 @@ fun ValueCard(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = textColor,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                textAlign = TextAlign.End,
             )
             Text(
                 text = title,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Thin,
                 color = textColor.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                textAlign = TextAlign.End
             )
         }
     }
