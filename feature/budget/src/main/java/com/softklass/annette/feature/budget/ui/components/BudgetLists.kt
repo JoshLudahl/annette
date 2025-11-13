@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.softklass.annette.core.ui.AnnetteDivider
 import com.softklass.annette.feature.budget.ui.screens.BudgetEntity
 import java.text.NumberFormat
 import java.time.Instant
@@ -75,6 +76,10 @@ fun BudgetLineItemList(
                     ),
                 onClick = { onItemClick?.invoke(entity) }
             )
+
+            if (entity != items.last()) {
+                AnnetteDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
         }
         item { Spacer(modifier = Modifier.height(4.dp)) }
     }
