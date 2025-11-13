@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -30,7 +31,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val dynamicColorEnabled by settingsPreferences.dynamicColorEnabled.collectAsState(initial = true)
             val themeMode by settingsPreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
+            val isDarkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.DARK -> true
+                ThemeMode.LIGHT -> false
+            }
+
             AnnetteTheme(
+                darkTheme = isDarkTheme,
                 dynamicColorEnabled = dynamicColorEnabled,
             ) {
                 Surface(
