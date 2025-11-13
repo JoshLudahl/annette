@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.R
 import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
-import com.softklass.annette.currencyFormatter
+import com.softklass.annette.core.ui.currency.currencyFormatter
 import com.softklass.annette.ui.components.CallToActionCard
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
 import com.softklass.theme.ui.theme.ExtendedTheme

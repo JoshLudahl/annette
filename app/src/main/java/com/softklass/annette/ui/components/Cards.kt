@@ -48,7 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.softklass.annette.currencyFormatter
+import com.softklass.annette.core.ui.currency.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.theme.ui.theme.ExtendedTheme

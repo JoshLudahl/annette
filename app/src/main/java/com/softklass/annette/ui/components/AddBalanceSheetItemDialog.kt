@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.softklass.annette.amountFormatted
+import com.softklass.annette.core.ui.currency.amountFormatted
 import com.softklass.annette.data.model.BalanceSheetType
 import java.text.SimpleDateFormat
 import java.util.Calendar

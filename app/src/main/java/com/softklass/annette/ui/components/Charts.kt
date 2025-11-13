@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.softklass.annette.core.ui.currency.shortCurrencyFormatter
 import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetValues
 import java.text.SimpleDateFormat
@@ -68,17 +69,36 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
     if (xValues.isEmpty() || yValues.isEmpty() || xValues.size < 2) {
         EmptyChart()
     } else {
+        // Compute an adaptive Y range so the line isn't pinned to the top when the data range is small
+        val yMin = yValues.minOrNull() ?: 0f
+        val yMax = yValues.maxOrNull() ?: 0f
+        val yRange = (yMax - yMin).let { if (it <= 0f) 0f else it }
+        val yPadding = when {
+            yRange > 0f -> (yRange * 0.1f).coerceAtLeast(1f)
+            else -> 1f
+        }
+        // Normalize values relative to a shifted baseline so the Y-axis fits data tightly.
+        val yBase = yMin - yPadding
+        val yValuesShifted = yValues.map { it - yBase }
+
         val modelProducer = remember { CartesianChartModelProducer() }
-        LaunchedEffect(xValues, yValues) {
+        LaunchedEffect(xValues, yValuesShifted) {
             modelProducer.runTransaction {
-                lineSeries { series(xValues, yValues) }
+                lineSeries { series(xValues, yValuesShifted) }
             }
         }
 
         CartesianChartHost(
             rememberCartesianChart(
                 rememberLineCartesianLayer(),
-                startAxis = VerticalAxis.rememberStart(),
+                startAxis = VerticalAxis.rememberStart(
+                    valueFormatter = { _, value, _ ->
+                        // Convert back from normalized to real-world value.
+                        val real = value + yBase
+
+                        "${shortCurrencyFormatter.format(real)}"
+                    }
+                ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
                         // Vico forbids returning an empty string here. Coerce index within bounds and provide non-empty fallback.
@@ -122,17 +142,35 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
         val xLabels =
             remember(latestPerDay) { latestPerDay.map { labelFormatter.format(Date(it.date)) } }
 
+        // Compute an adaptive Y range so the line isn't pinned to the top when the data range is small
+        val yMin = yValues.minOrNull() ?: 0f
+        val yMax = yValues.maxOrNull() ?: 0f
+        val yRange = (yMax - yMin).let { if (it <= 0f) 0f else it }
+        val yPadding = when {
+            yRange > 0f -> (yRange * 0.1f).coerceAtLeast(1f)
+            else -> 1f
+        }
+
+        // Normalize values relative to a shifted baseline so the Y-axis fits data tightly.
+        val yBase = yMin - yPadding
+        val yValuesShifted = yValues.map { it - yBase }
+
         val modelProducer = remember { CartesianChartModelProducer() }
-        LaunchedEffect(xValues, yValues) {
+        LaunchedEffect(xValues, yValuesShifted) {
             modelProducer.runTransaction {
-                lineSeries { series(xValues, yValues) }
+                lineSeries { series(xValues, yValuesShifted) }
             }
         }
 
         CartesianChartHost(
             rememberCartesianChart(
                 rememberLineCartesianLayer(),
-                startAxis = VerticalAxis.rememberStart(),
+                startAxis = VerticalAxis.rememberStart(
+                    valueFormatter = { _, value, _ ->
+                        val real = value + yBase
+                        "${shortCurrencyFormatter.format(real)}"
+                    }
+                ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
                         // Ensure non-empty label per Vico requirements
