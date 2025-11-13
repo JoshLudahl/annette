@@ -59,7 +59,7 @@ fun LiabilitiesScreen(
         )
     }
 
-    Scaffold { innerPadding ->
+    Scaffold(contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0)) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()
