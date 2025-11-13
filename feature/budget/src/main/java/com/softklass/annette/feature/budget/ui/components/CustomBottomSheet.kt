@@ -22,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,7 +53,7 @@ fun AddBudgetItemBottomSheet(
     var type by remember { mutableStateOf(initialType) }
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var dueDateMillis by remember { mutableStateOf(System.currentTimeMillis()) }
+    var dueDateMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
     val dateFormatter = remember {
         SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).apply { timeZone = TimeZone.getTimeZone("UTC") }
@@ -81,7 +82,7 @@ fun AddBudgetItemBottomSheet(
 
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it.trimStart().trimEnd() },
+                    onValueChange = { name = it.trimStart() },
                     label = { Text("Name") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -93,8 +94,15 @@ fun AddBudgetItemBottomSheet(
 
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = {
-                        amount = it.replace(",", "").filter { ch -> ch.isDigit() || ch == '.' }
+                    onValueChange = { newAmount ->
+                        if (newAmount.isEmpty()) {
+                            amount = ""
+                            return@OutlinedTextField
+                        }
+                        // If the new value is a valid decimal number or is empty, update the state
+                        if (newAmount.matches(Regex("^\\d*\\.?\\d{0,2}$"))) {
+                            amount = newAmount
+                        }
                     },
                     label = { Text("Amount") },
                     modifier = Modifier
