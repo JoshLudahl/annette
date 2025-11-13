@@ -20,14 +20,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.softklass.annette.core.ui.currency.shortCurrencyFormatter
 import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetValues
@@ -89,10 +94,26 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
             }
         }
 
+        val axisLabelComponent =
+            rememberAxisLabelComponent(color = MaterialTheme.colorScheme.onSurface)
         CartesianChartHost(
             chart = rememberCartesianChart(
-                rememberLineCartesianLayer(),
+                rememberLineCartesianLayer(
+                    lineProvider = LineCartesianLayer.LineProvider.series(
+                        vicoTheme.lineCartesianLayerColors.map {
+                            LineCartesianLayer.rememberLine(
+                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
+                                fill = LineCartesianLayer.LineFill.single(
+                                    fill(
+                                        MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                            )
+                        }
+                    )
+                ),
                 startAxis = VerticalAxis.rememberStart(
+                    label = axisLabelComponent,
                     valueFormatter = { _, value, _ ->
                         // Convert back from normalized to real-world value.
                         val real = value + yBase
@@ -102,6 +123,7 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
                     guideline = null
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
+                    label = axisLabelComponent,
                     valueFormatter = { _, value, _ ->
                         // Vico forbids returning an empty string here. Coerce index within bounds and provide non-empty fallback.
                         val safeLabels = xLabels
@@ -168,10 +190,26 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
             }
         }
 
+        val axisLabelComponent =
+            rememberAxisLabelComponent(color = MaterialTheme.colorScheme.onSurface)
         CartesianChartHost(
             rememberCartesianChart(
-                rememberLineCartesianLayer(),
+                rememberLineCartesianLayer(
+                    lineProvider = LineCartesianLayer.LineProvider.series(
+                        vicoTheme.lineCartesianLayerColors.map {
+                            LineCartesianLayer.rememberLine(
+                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
+                                fill = LineCartesianLayer.LineFill.single(
+                                    fill(
+                                        MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                            )
+                        }
+                    )
+                ),
                 startAxis = VerticalAxis.rememberStart(
+                    label = axisLabelComponent,
                     valueFormatter = { _, value, _ ->
                         val real = value + yBase
                         "${shortCurrencyFormatter.format(real)}"
@@ -179,6 +217,7 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
                     guideline = null
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
+                    label = axisLabelComponent,
                     valueFormatter = { _, value, _ ->
                         // Ensure non-empty label per Vico requirements
                         val safeLabels = xLabels
