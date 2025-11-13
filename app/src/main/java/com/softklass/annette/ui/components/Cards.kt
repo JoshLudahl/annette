@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
-import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.CreditCard
@@ -53,7 +52,6 @@ import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.model.BalanceSheetType
 import com.softklass.theme.ui.theme.ExtendedTheme
-
 import java.text.NumberFormat
 import java.util.Locale
 
