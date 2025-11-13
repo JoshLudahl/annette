@@ -115,7 +115,8 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
         ExpenseIncomeDonut(
             income = income,
             expenses = expenses,
-            modifier = Modifier.size(220.dp).padding(bottom = 20.dp)
+            // Let the composable manage the Canvas size internally; only apply padding here
+            modifier = Modifier.padding(bottom = 20.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -161,80 +162,107 @@ private fun ExpenseIncomeDonut(
     val incomeColor = ExtendedTheme.colors.asset.color
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        // Canvas drawing with tap detection
-        Box(modifier = Modifier.size(Modifier.size(0.dp).let { modifier }.let { 0.dp })) {}
-        Canvas(
-            modifier = Modifier
-                .size(modifier
-                    .let { 220.dp })
-                .pointerInput(income, expenses) {
-                    detectTapGestures { offset ->
-                        val size = this.size
-                        val center = Offset(size.width / 2f, size.height / 2f)
-                        val radius = min(size.width, size.height) / 2f
-                        val ringInner = radius - strokeWidth.toPx()
-                        val dx = offset.x - center.x
-                        val dy = offset.y - center.y
-                        val distance = hypot(dx, dy)
-                        val withinRing = distance in ringInner..radius
-                        if (!withinRing) {
-                            showTooltip = false
-                            return@detectTapGestures
+        // Donut size (fixed for now, could be made configurable later)
+        val donutSize = 220.dp
+
+        // Wrap donut in a Box so we can overlay the tooltip without affecting layout height
+        Box(modifier = Modifier.size(donutSize)) {
+            // Canvas drawing with tap detection
+            Canvas(
+                modifier = Modifier
+                    .matchParentSize()
+                    .pointerInput(income, expenses, strokeWidth) {
+                        detectTapGestures { offset ->
+                            val size = this.size
+                            val center = Offset(size.width / 2f, size.height / 2f)
+                            val strokePx = strokeWidth.toPx()
+                            // Match the draw radius math exactly (center radius for the stroke)
+                            val drawRadius = min(size.width, size.height) / 2f - 2.dp.toPx()
+                            val ringInner = drawRadius - strokePx / 2f - 1f // small tolerance
+                            val ringOuter = drawRadius + strokePx / 2f + 1f
+
+                            val dx = offset.x - center.x
+                            val dy = offset.y - center.y
+                            val distance = hypot(dx, dy)
+                            val withinRing = distance in ringInner..ringOuter
+                            if (!withinRing) {
+                                showTooltip = false
+                                return@detectTapGestures
+                            }
+                            // Angle from -PI..PI, convert to degrees 0..360 starting at -90 (12 o'clock)
+                            var angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
+                            angle = (angle + 450f) % 360f // shift so 0° is at top and increases clockwise
+
+                            val expenseSweep = animatedRatio * 360f
+                            val tappedSegment = if (angle <= expenseSweep) DonutSegment.EXPENSE else DonutSegment.INCOME
+                            selected = tappedSegment
+                            showTooltip = true
                         }
-                        // Angle from -PI..PI, convert to degrees 0..360 starting at -90 (12 o'clock)
-                        var angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
-                        angle = (angle + 450f) % 360f // shift so 0° is at top and increases clockwise
-
-                        val expenseSweep = animatedRatio * 360f
-                        val tappedSegment = if (angle <= expenseSweep) DonutSegment.EXPENSE else DonutSegment.INCOME
-                        selected = tappedSegment
-                        showTooltip = true
                     }
-                }
-        ) {
-            val size = this.size
-            val center = Offset(size.width / 2f, size.height / 2f)
-            val radius = min(size.width, size.height) / 2f - 2.dp.toPx()
-            val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
+            ) {
+                val size = this.size
+                val center = Offset(size.width / 2f, size.height / 2f)
+                val strokePx = strokeWidth.toPx()
+                // Use the same radius for drawing and hit-testing (center radius of the stroke)
+                val drawRadius = min(size.width, size.height) / 2f - 2.dp.toPx()
+                val stroke = Stroke(width = strokePx, cap = StrokeCap.Round)
 
-            // Background track
-            drawArc(
-                color = trackColor,
-                startAngle = 0f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                style = stroke
-            )
-
-            // Expense arc (start at -90°)
-            val startAngle = -90f
-            val expenseSweep = animatedRatio * 360f
-            if (expenseSweep > 0.1f) {
+                // Background track
                 drawArc(
-                    color = expenseColor,
-                    startAngle = startAngle,
-                    sweepAngle = expenseSweep,
+                    color = trackColor,
+                    startAngle = 0f,
+                    sweepAngle = 360f,
                     useCenter = false,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
+                    topLeft = Offset(center.x - drawRadius, center.y - drawRadius),
+                    size = androidx.compose.ui.geometry.Size(drawRadius * 2, drawRadius * 2),
                     style = stroke
                 )
+
+                // Expense arc (start at -90°)
+                val startAngle = -90f
+                val expenseSweep = animatedRatio * 360f
+                if (expenseSweep > 0.1f) {
+                    drawArc(
+                        color = expenseColor,
+                        startAngle = startAngle,
+                        sweepAngle = expenseSweep,
+                        useCenter = false,
+                        topLeft = Offset(center.x - drawRadius, center.y - drawRadius),
+                        size = androidx.compose.ui.geometry.Size(drawRadius * 2, drawRadius * 2),
+                        style = stroke
+                    )
+                }
+
+                // Income arc is the remainder
+                val incomeSweep = 360f - expenseSweep
+                if (incomeSweep > 0.1f) {
+                    drawArc(
+                        color = incomeColor,
+                        startAngle = startAngle + expenseSweep,
+                        sweepAngle = incomeSweep,
+                        useCenter = false,
+                        topLeft = Offset(center.x - drawRadius, center.y - drawRadius),
+                        size = androidx.compose.ui.geometry.Size(drawRadius * 2, drawRadius * 2),
+                        style = stroke
+                    )
+                }
             }
 
-            // Income arc is the remainder
-            val incomeSweep = 360f - expenseSweep
-            if (incomeSweep > 0.1f) {
-                drawArc(
-                    color = incomeColor,
-                    startAngle = startAngle + expenseSweep,
-                    sweepAngle = incomeSweep,
-                    useCenter = false,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                    style = stroke
-                )
+            // Overlay tooltip inside the same Box so it doesn't change layout height
+            if (showTooltip && selected != null) {
+                val label = if (selected == DonutSegment.EXPENSE) "Expense" else "Income"
+                val amount = if (selected == DonutSegment.EXPENSE) safeExpenses else safeIncome
+                // Place tooltip near the top center of the donut
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 8.dp)
+                ) {
+                    DonutTooltip(
+                        label = label,
+                        amountText = formatter.format(amount)
+                    )
+                }
             }
         }
 
@@ -253,14 +281,6 @@ private fun ExpenseIncomeDonut(
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-        if (showTooltip && selected != null) {
-            val label = if (selected == DonutSegment.EXPENSE) "Expense" else "Income"
-            val amount = if (selected == DonutSegment.EXPENSE) safeExpenses else safeIncome
-            DonutTooltip(
-                label = label,
-                amountText = formatter.format(amount)
-            )
-        }
     }
 }
 
