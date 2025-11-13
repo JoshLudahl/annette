@@ -2,7 +2,6 @@ package com.softklass.annette.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountBalance
-import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,11 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
 import com.softklass.annette.currencyFormatter
 import com.softklass.annette.ui.components.CallToActionCard
-import com.softklass.annette.ui.components.ValueCard
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
-import com.softklass.annette.ui.theme.ExtendedTheme
+import com.softklass.theme.ui.theme.ExtendedTheme
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,35 +152,5 @@ fun NetWorthCardTitle(
                 color = Color.White,
             )
         }
-    }
-}
-
-@Composable
-fun DisplayIncomeExpenseCards(
-    income: Double,
-    expense: Double
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        ValueCard(
-            totalAssets = income,
-            title = "Income",
-            textColor = ExtendedTheme.colors.blackboard.color,
-            modifier = Modifier.weight(1f),
-            icon = Icons.Rounded.AccountBalance,
-            iconBackgroundColor = ExtendedTheme.colors.asset.colorContainer,
-            onCardClick = { /* Handle income card click */ }
-        )
-        ValueCard(
-            totalAssets = expense,
-            title = "Expense",
-            textColor = ExtendedTheme.colors.blackboard.color,
-            modifier = Modifier.weight(1f),
-            icon = Icons.Rounded.AccountBalanceWallet,
-            iconBackgroundColor = ExtendedTheme.colors.liability.colorContainer,
-            onCardClick = { /* Handle expense card click */ }
-        )
     }
 }

@@ -38,7 +38,7 @@ import com.softklass.annette.ui.components.ConfirmDeleteItemDialog
 import com.softklass.annette.ui.components.EmptyBalanceSheetListCard
 import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.AssetsViewModel
-import com.softklass.annette.ui.theme.ExtendedTheme
+import com.softklass.theme.ui.theme.ExtendedTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -38,9 +38,8 @@ import com.softklass.annette.ui.components.BalanceSheetRoundedCardContainer
 import com.softklass.annette.ui.components.EmptyBalanceSheetListCard
 import com.softklass.annette.ui.components.HistoricalChart
 import com.softklass.annette.ui.screens.viewmodels.LiabilitiesViewModel
-import com.softklass.annette.ui.theme.AnnetteTheme
-import com.softklass.annette.ui.theme.ExtendedTheme
-
+import com.softklass.theme.ui.theme.AnnetteTheme
+import com.softklass.theme.ui.theme.ExtendedTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -52,7 +52,8 @@ import androidx.compose.ui.unit.sp
 import com.softklass.annette.currencyFormatter
 import com.softklass.annette.data.database.dao.BalanceSheetItemWithValue
 import com.softklass.annette.data.model.BalanceSheetType
-import com.softklass.annette.ui.theme.ExtendedTheme
+import com.softklass.theme.ui.theme.ExtendedTheme
+
 import java.text.NumberFormat
 import java.util.Locale
 
