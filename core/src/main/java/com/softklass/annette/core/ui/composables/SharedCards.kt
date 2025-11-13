@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -112,13 +113,15 @@ fun ValueCard(
 @Composable
 fun BudgetInfoHeader(
     total: Double,
-    type: Budget
+    type: Budget? = null
 ) {
     val item = when (type) {
-        Budget.INCOME -> "Income" to ExtendedTheme.colors.asset.colorContainer
-        Budget.EXPENSE -> "Expense" to ExtendedTheme.colors.liability.colorContainer
+        Budget.INCOME -> "Total Income" to ExtendedTheme.colors.asset.colorContainer
+        Budget.EXPENSE -> "Total Expense" to ExtendedTheme.colors.liability.colorContainer
+        else -> "Income - Expense" to ExtendedTheme.colors.cta.color
     }
-    Box(modifier = Modifier.padding(top = 4.dp)) {
+
+    Box {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,6 +141,7 @@ fun BudgetInfoHeader(
                     icon = when (type) {
                         Budget.INCOME -> Icons.Rounded.AccountBalance
                         Budget.EXPENSE -> Icons.Rounded.AccountBalanceWallet
+                        else -> Icons.Rounded.Info
                     },
                     iconContainerColor = item.second,
                     onClickIcon = { }
@@ -154,7 +158,7 @@ fun BudgetInfoHeader(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
-                        text = "Total ${item.first}",
+                        text = item.first,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
