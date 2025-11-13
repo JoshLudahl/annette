@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
 import com.softklass.annette.core.ui.composables.RoundedIconDisplay
 import com.softklass.annette.core.ui.currency.currencyFormatter
+import com.softklass.theme.ui.theme.ExtendedTheme
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.atan2
@@ -61,9 +63,9 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
     ) {
         // Small info section above the donut styled like a compact ValueCard (neutral)
         val net = income - expenses
+        val netColor = if (net >= 0) ExtendedTheme.colors.asset.colorContainer else ExtendedTheme.colors.liability.colorContainer
         Box(
             modifier = Modifier.padding(
-                top = 12.dp,
                 bottom = 20.dp,
             )
         ) {
@@ -72,7 +74,7 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = netColor.copy(alpha = 0.2f)
                 ),
                 shape = RoundedCornerShape(16.dp),
             ) {
@@ -85,11 +87,15 @@ fun DashboardTabContent(viewModel: BudgetViewModel) {
                 ) {
                     RoundedIconDisplay(
                         icon = Icons.Rounded.Info,
-                        iconContainerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f),
-                        iconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        iconContainerColor = netColor,
                         onClickIcon = { }
                     )
-                    Column(modifier = Modifier.weight(1f)) {
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
                         Text(
                             text = currencyFormatter.format(net),
                             style = MaterialTheme.typography.titleMedium,
@@ -268,7 +274,7 @@ private fun DonutTooltip(label: String, amountText: String, modifier: Modifier =
         color = MaterialTheme.colorScheme.surface
     ) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-            androidx.compose.material3.Icon(
+            Icon(
                 imageVector = Icons.Rounded.Info,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
@@ -284,68 +290,6 @@ private fun DonutTooltip(label: String, amountText: String, modifier: Modifier =
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun IncomeExpenseBoxes(
-    income: Double,
-    expense: Double,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        SummaryBox(
-            title = "Income",
-            amount = income,
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.weight(1f)
-        )
-        SummaryBox(
-            title = "Expense",
-            amount = expense,
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
-@Composable
-private fun SummaryBox(
-    title: String,
-    amount: Double,
-    containerColor: Color,
-    contentColor: Color,
-    modifier: Modifier = Modifier
-) {
-    val formatter = remember { NumberFormat.getCurrencyInstance(Locale.US) }
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor.copy(alpha = 0.8f)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = formatter.format(amount),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = contentColor
             )
         }
     }
