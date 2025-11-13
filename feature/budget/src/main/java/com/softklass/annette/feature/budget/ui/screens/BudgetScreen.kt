@@ -117,7 +117,8 @@ fun BudgetScreen(
                     }
                 )
             }
-        }
+        },
+        modifier = Modifier.fillMaxSize()
     )
 }
 

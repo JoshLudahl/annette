@@ -47,11 +47,12 @@ fun NetWorthScreen(
     val expenseTotal by viewModel.expenseTotal.collectAsState()
 
     Scaffold { innerPadding ->
+        innerPadding
         NetWorthScreenContent(
             netWorth = netWorth,
             incomeTotal = incomeTotal,
             expenseTotal = expenseTotal,
-            modifier = modifier.padding(innerPadding)
+            modifier = modifier
         )
     }
 
