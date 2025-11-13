@@ -1,17 +1,13 @@
 package com.softklass.annette.feature.budget.ui.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PriceChange
+import androidx.compose.material.icons.rounded.AddCard
 import androidx.compose.material.icons.rounded.MonetizationOn
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -20,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,7 +41,7 @@ fun BudgetFloatingActionButton(
             type = BudgetItemType.INCOME,
         ),
         FloatingActionButtonMenuItem(
-            icon = Icons.Filled.PriceChange,
+            icon = Icons.Rounded.AddCard,
             text = "Add Expense",
             type = BudgetItemType.EXPENSE,
         ),
