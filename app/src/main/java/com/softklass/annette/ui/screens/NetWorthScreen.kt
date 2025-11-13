@@ -1,5 +1,6 @@
 package com.softklass.annette.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,12 +87,20 @@ fun NetWorthScreenContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        val context = LocalContext.current
         CallToActionCard(
             title = "Create a Saving goal",
-            subtitle = "This is a placeholder for your saving goals. You can create a saving goal here.",
+            subtitle = "Set some savings goals for reaching your financial goals. (coming soon)",
             showText = false,
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            onClick = {
+                Toast.makeText(
+                    context,
+                    "Coming soon",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

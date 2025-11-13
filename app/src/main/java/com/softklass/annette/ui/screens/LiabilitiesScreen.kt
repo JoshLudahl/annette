@@ -1,8 +1,10 @@
 package com.softklass.annette.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -59,7 +61,9 @@ fun LiabilitiesScreen(
         )
     }
 
-    Scaffold(contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0)) { innerPadding ->
+    Scaffold(
+        contentWindowInsets = WindowInsets(0),
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()
