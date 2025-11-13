@@ -157,8 +157,8 @@ private fun ExpenseIncomeDonut(
 
     // Precompute colors outside Canvas (MaterialTheme access is composable)
     val trackColor = MaterialTheme.colorScheme.surfaceVariant
-    val expenseColor = MaterialTheme.colorScheme.error
-    val incomeColor = MaterialTheme.colorScheme.primary
+    val expenseColor = ExtendedTheme.colors.liability.colorContainer
+    val incomeColor = ExtendedTheme.colors.asset.color
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         // Canvas drawing with tap detection
