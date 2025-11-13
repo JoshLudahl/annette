@@ -1,13 +1,16 @@
 package com.softklass.annette.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,10 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.softklass.annette.R
 import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
 import com.softklass.annette.currencyFormatter
 import com.softklass.annette.ui.components.CallToActionCard
@@ -136,31 +141,44 @@ fun NetWorthCardTitle(
         ),
         shape = RoundedCornerShape(24.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "Net worth balance",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Thin,
-                color = ExtendedTheme.colors.blackboard.onColorContainer.copy(alpha = 0.6f)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(120.dp),
+                alpha = 0.8f,
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                    MaterialTheme.colorScheme.surface
+                )
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = currencyFormatter.format(netWorth),
-                fontSize = 34.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = "Assets - Liabilities",
-                fontSize = 14.sp,
-                color = Color.White,
-            )
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Net worth balance",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Thin,
+                    color = ExtendedTheme.colors.blackboard.onColorContainer.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = currencyFormatter.format(netWorth),
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "Assets - Liabilities",
+                    fontSize = 14.sp,
+                    color = Color.White,
+                )
+            }
         }
     }
 }
