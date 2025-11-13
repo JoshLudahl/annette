@@ -135,7 +135,10 @@ fun BudgetInfoHeader(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 RoundedIconDisplay(
-                    icon = Icons.Rounded.AccountBalance,
+                    icon = when (type) {
+                        Budget.INCOME -> Icons.Rounded.AccountBalance
+                        Budget.EXPENSE -> Icons.Rounded.AccountBalanceWallet
+                    },
                     iconContainerColor = item.second,
                     onClickIcon = { }
                 )
