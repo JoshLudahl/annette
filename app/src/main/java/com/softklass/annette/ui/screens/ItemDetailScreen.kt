@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -114,7 +115,9 @@ fun ItemDetailScreen(
                     IconButton(onClick = { showEditDialog = true }) {
                         Icon(Icons.Rounded.Edit, contentDescription = "Edit Item")
                     }
-                }
+                },
+                // Remove extra top inset to eliminate the gap above the toolbar
+                windowInsets = WindowInsets(0)
             )
         },
         floatingActionButton = {
