@@ -1,6 +1,7 @@
 package com.softklass.annette.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -89,7 +90,7 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
         }
 
         CartesianChartHost(
-            rememberCartesianChart(
+            chart = rememberCartesianChart(
                 rememberLineCartesianLayer(),
                 startAxis = VerticalAxis.rememberStart(
                     valueFormatter = { _, value, _ ->
@@ -97,7 +98,8 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
                         val real = value + yBase
 
                         "${shortCurrencyFormatter.format(real)}"
-                    }
+                    },
+                    guideline = null
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
@@ -109,10 +111,14 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
                             val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
                             safeLabels[index].ifBlank { "-" }
                         }
-                    }
+                    },
+                    guideline = null
                 ),
             ),
             modelProducer,
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ),
         )
     }
 }
@@ -169,7 +175,8 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
                     valueFormatter = { _, value, _ ->
                         val real = value + yBase
                         "${shortCurrencyFormatter.format(real)}"
-                    }
+                    },
+                    guideline = null
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, value, _ ->
@@ -181,10 +188,14 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
                             val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
                             safeLabels[index].ifBlank { "-" }
                         }
-                    }
+                    },
+                    guideline = null
                 ),
             ),
             modelProducer,
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ),
         )
     }
 }
