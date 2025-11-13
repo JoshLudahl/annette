@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.FabPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -75,7 +76,7 @@ fun BudgetScreen(
                 }
             )
         },
-        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End,
+        floatingActionButtonPosition = FabPosition.End,
         contentWindowInsets = WindowInsets(0),
         content = { innerPadding ->
             Column(
