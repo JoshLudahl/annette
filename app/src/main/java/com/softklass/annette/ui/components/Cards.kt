@@ -180,7 +180,7 @@ fun BalanceSheetItemCard(
     Card(
         modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         shape = RoundedCornerShape(20.dp),
         onClick = onClick

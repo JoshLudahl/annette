@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,7 +39,8 @@ fun BalanceSheetItemList(
                 contentType = category,
             ) {
                 Row(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(start = 24.dp, end = 16.dp, bottom = 8.dp)
                 ) {
                     Text(
@@ -75,6 +79,12 @@ fun BalanceSheetItemList(
                     }
                 )
                 Spacer(Modifier.height(4.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
+                )
             }
         }
 
