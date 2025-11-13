@@ -82,9 +82,9 @@ fun BalanceSheetHeaderCard(
     ) {
 
         val label = when (type) {
-                BalanceSheetType.ASSETS -> "Assets"
-                BalanceSheetType.LIABILITIES -> "Liabilities"
-            }
+            BalanceSheetType.ASSETS -> "Assets"
+            BalanceSheetType.LIABILITIES -> "Liabilities"
+        }
 
         Row(
             modifier = Modifier
@@ -93,8 +93,6 @@ fun BalanceSheetHeaderCard(
 
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // Icon and title text
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
@@ -104,31 +102,26 @@ fun BalanceSheetHeaderCard(
                     iconContentColor = colors.second,
                     onClickIcon = onClickIcon
                 )
-
-
             }
 
             Spacer(modifier = Modifier.weight(1f))
-            // Value text
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-
-
-            Text(
-                text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 28.sp
-            )
-            Text(
-                text = "Total $label",
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
-        }
+                Text(
+                    text = currencyFormatter.format(items.sumOf { it.value ?: 0.0 }),
+                    textAlign = TextAlign.End,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 28.sp
+                )
+                Text(
+                    text = "Total $label",
+                    textAlign = TextAlign.End,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
@@ -178,7 +171,9 @@ fun BalanceSheetItemCard(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -308,59 +303,6 @@ fun CallToActionCard(
                     )
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-fun ValueCard(
-    totalAssets: Double,
-    title: String,
-    textColor: Color,
-    modifier: Modifier,
-    icon: ImageVector = Icons.Filled.AccountBalance,
-    iconBackgroundColor: Color,
-    onCardClick: () -> Unit
-) {
-    Card(
-        modifier = modifier
-            .padding(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = iconBackgroundColor.copy(alpha = 0.2f)
-        ),
-        shape = RoundedCornerShape(24.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
-        ) {
-            RoundedIconDisplay(
-                icon = icon,
-                iconContainerColor = iconBackgroundColor,
-                onClickIcon = onCardClick
-            )
-
-            Spacer(modifier = Modifier.height(45.dp))
-
-            Text(
-                text = currencyFormatter.format(totalAssets),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = textColor,
-                modifier = Modifier.padding(bottom = 8.dp),
-                textAlign = TextAlign.End,
-            )
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Thin,
-                color = textColor.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 8.dp),
-                textAlign = TextAlign.End
-            )
         }
     }
 }
