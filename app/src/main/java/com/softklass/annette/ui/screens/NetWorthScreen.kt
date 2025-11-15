@@ -87,7 +87,8 @@ fun NetWorthScreenContent(
             title = "Budget for this month",
             subtitle = "Cash Available",
             containerColor = ExtendedTheme.colors.cta.colorContainer,
-            contentColor = ExtendedTheme.colors.cta.onColor
+            contentColor = ExtendedTheme.colors.cta.onColor,
+            monthlyBudget = currencyFormatter.format(incomeTotal - expenseTotal),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -105,11 +106,11 @@ fun NetWorthScreenContent(
                     "Coming soon",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
+            },
+            monthlyBudget = "0.00"
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
 
         Text(
             text = "Cash",

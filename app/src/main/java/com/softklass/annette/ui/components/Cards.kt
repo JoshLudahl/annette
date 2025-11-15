@@ -234,11 +234,13 @@ fun BalanceSheetItemCard(
     }
 }
 
+
 @Composable
 fun CallToActionCard(
     title: String,
     subtitle: String,
     showText: Boolean = true,
+    monthlyBudget: String,
     containerColor: Color,
     contentColor: Color,
     onClick: () -> Unit = { /* no-op */ }
@@ -255,14 +257,12 @@ fun CallToActionCard(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(vertical = 24.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .padding(top = 4.dp, bottom = 4.dp)
-                    .fillMaxWidth(.75f)
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = title,
@@ -281,15 +281,12 @@ fun CallToActionCard(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier
-                    .padding(end = 16.dp)
+            Column(
+                horizontalAlignment = Alignment.End
             ) {
                 if (showText) {
                     Text(
-                        text = "$2,599",
+                        text = monthlyBudget,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = contentColor
@@ -304,6 +301,7 @@ fun CallToActionCard(
         }
     }
 }
+
 
 @Composable
 fun BalanceSheetRoundedCardContainer(
