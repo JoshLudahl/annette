@@ -344,7 +344,7 @@ private fun resolveIconForCategory(category: String): ImageVector {
         "education", "books", "school", "university" -> Icons.Rounded.School
         "travel", "vacation", "hotel", "airplane", "tourism" -> Icons.Rounded.Flight
         "groceries", "supermarket", "market", "farmers market" -> Icons.Rounded.FoodBank
-        "credit card" -> Icons.Rounded.CreditCard
+        "credit card", "card", "credit" -> Icons.Rounded.CreditCard
         "loan" -> Icons.Rounded.AttachMoney
         "cash" -> Icons.Rounded.Money
         "investments", "retirement" -> Icons.AutoMirrored.Rounded.TrendingUp
