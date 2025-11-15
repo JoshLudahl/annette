@@ -193,8 +193,9 @@ fun NetWorthCardTitle(
                     text = "Assets - Liabilities",
                     fontSize = 14.sp,
                     color = Color.White,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 OverViewDivider(
                     data = listOf("Assets", "Liabilities"),
                     values = { label ->
