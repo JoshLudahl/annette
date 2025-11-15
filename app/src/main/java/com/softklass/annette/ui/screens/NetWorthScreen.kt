@@ -155,7 +155,9 @@ fun NetWorthCardTitle(
         ),
         shape = RoundedCornerShape(24.dp),
     ) {
-        Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = null,
