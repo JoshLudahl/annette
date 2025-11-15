@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softklass.annette.R
+import com.softklass.annette.core.ui.OverViewDivider
 import com.softklass.annette.core.ui.composables.DisplayIncomeExpenseCards
 import com.softklass.annette.core.ui.currency.currencyFormatter
 import com.softklass.annette.ui.components.CallToActionCard
@@ -46,6 +47,9 @@ fun NetWorthScreen(
     modifier: Modifier = Modifier,
     viewModel: NetWorthViewModel
 ) {
+    val totalAssets by viewModel.totalAssets.collectAsState()
+    val totalLiabilities by viewModel.totalLiabilities.collectAsState()
+
     val netWorth by viewModel.netWorth.collectAsState()
     val incomeTotal by viewModel.incomeTotal.collectAsState()
     val expenseTotal by viewModel.expenseTotal.collectAsState()
@@ -54,6 +58,8 @@ fun NetWorthScreen(
         innerPadding
         NetWorthScreenContent(
             netWorth = netWorth,
+            assetsTotal = totalAssets,
+            liabilitiesTotal = totalLiabilities,
             incomeTotal = incomeTotal,
             expenseTotal = expenseTotal,
             modifier = modifier
@@ -65,6 +71,8 @@ fun NetWorthScreen(
 @Composable
 fun NetWorthScreenContent(
     netWorth: Double,
+    assetsTotal: Double,
+    liabilitiesTotal: Double,
     incomeTotal: Double,
     expenseTotal: Double,
     modifier: Modifier
@@ -79,7 +87,11 @@ fun NetWorthScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        NetWorthCardTitle(netWorth = netWorth)
+        NetWorthCardTitle(
+            netWorth = netWorth,
+            assetsTotal = assetsTotal,
+            liabilitiesTotal = liabilitiesTotal
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -131,7 +143,9 @@ fun NetWorthScreenContent(
 
 @Composable
 fun NetWorthCardTitle(
-    netWorth: Double
+    netWorth: Double,
+    assetsTotal: Double,
+    liabilitiesTotal: Double
 ) {
     Card(
         modifier = Modifier
@@ -142,12 +156,13 @@ fun NetWorthCardTitle(
         ),
         shape = RoundedCornerShape(24.dp),
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
+                    .padding(bottom = 16.dp)
                     .size(120.dp),
                 alpha = 0.8f,
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
@@ -178,6 +193,24 @@ fun NetWorthCardTitle(
                     text = "Assets - Liabilities",
                     fontSize = 14.sp,
                     color = Color.White,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OverViewDivider(
+                    data = listOf("Assets", "Liabilities"),
+                    values = { label ->
+                        when (label) {
+                            "Assets" -> assetsTotal.toFloat()
+                            "Liabilities" -> liabilitiesTotal.toFloat()
+                            else -> 0f
+                        }
+                    },
+                    colors = { label ->
+                        when (label) {
+                            "Assets" -> ExtendedTheme.colors.asset.color // bright accent for assets
+                            "Liabilities" -> ExtendedTheme.colors.liability.color
+                            else -> Color.White
+                        }
+                    }
                 )
             }
         }
