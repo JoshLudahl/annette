@@ -40,7 +40,6 @@ import com.softklass.annette.ui.components.CallToActionCard
 import com.softklass.annette.ui.screens.viewmodels.NetWorthViewModel
 import com.softklass.theme.ui.theme.ExtendedTheme
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NetWorthScreen(
