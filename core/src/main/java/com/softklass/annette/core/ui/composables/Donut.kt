@@ -51,7 +51,13 @@ fun Donut(
         MutableTransitionState(AnimatedCircleProgress.START)
             .apply { targetState = AnimatedCircleProgress.END }
     }
-    val stroke = with(LocalDensity.current) { Stroke(20.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Miter) }
+    val stroke = with(LocalDensity.current) {
+        Stroke(
+            20.dp.toPx(),
+            cap = StrokeCap.Butt,
+            join = StrokeJoin.Miter
+        )
+    }
     val transition = rememberTransition(currentState)
     val angleOffset by transition.animateFloat(
         transitionSpec = {
