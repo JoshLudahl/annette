@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.serializable)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "com.softklass.annette"
     compileSdk = 36
 
@@ -49,9 +51,9 @@ android {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-}
+    kotlin {
+        jvmToolchain(21)
+    }
 
 dependencies {
     implementation(project(":theme"))
