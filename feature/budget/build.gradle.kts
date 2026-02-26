@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -7,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.serializable)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.softklass.annette.feature.budget"
     compileSdk = 36
 
@@ -15,7 +17,6 @@ android {
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
