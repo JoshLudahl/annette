@@ -5,4 +5,12 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.built.in1.kotlin) apply false
+}
+
+extra.apply {
+    set("compileSdk", 37)
+    set("minSdk", 26)
+    set("targetSdk", 37)
+    set("javaVersion", JavaVersion.VERSION_21)
 }

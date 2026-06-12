@@ -8,16 +8,14 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.softklass.theme"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = rootProject.extra["compileSdk"] as Int
 
     buildFeatures {
         compose = true
     }
 
     defaultConfig {
-        minSdk = 26
+        minSdk = rootProject.extra["minSdk"] as Int
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,8 +31,8 @@ configure<LibraryExtension> {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = rootProject.extra["javaVersion"] as JavaVersion
+        targetCompatibility = rootProject.extra["javaVersion"] as JavaVersion
     }
 }
 
