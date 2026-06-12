@@ -11,12 +11,12 @@ plugins {
 
 configure<ApplicationExtension> {
     namespace = "com.softklass.annette"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.softklass.annette"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.02"
 
@@ -37,6 +37,7 @@ configure<ApplicationExtension> {
             applicationIdSuffix = ".debug"
             versionNameSuffix = " debug"
             resValue(type = "string", name = "app_name", value = "Annette debug")
+            resValue(type = "string", name = "app_version", value = "$versionNameSuffix")
         }
     }
 
@@ -93,7 +94,6 @@ dependencies {
     // VICO CHARTS
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
-    implementation(libs.vico.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

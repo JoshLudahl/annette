@@ -11,7 +11,7 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.softklass.annette.feature.budget"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
@@ -73,8 +73,6 @@ dependencies {
     // VICO CHARTS
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
-    implementation(libs.vico.core)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

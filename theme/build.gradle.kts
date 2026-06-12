@@ -9,7 +9,7 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.softklass.theme"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     buildFeatures {

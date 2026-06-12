@@ -1,5 +1,6 @@
 package com.softklass.annette.ui.screens
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,11 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.softklass.annette.BuildConfig
+import androidx.core.content.ContextCompat.getString
+
 import com.softklass.theme.ui.theme.AnnetteTheme
 
 data class SettingsItem(
@@ -44,6 +47,7 @@ fun SettingsScreen(
     onSettingsItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val settingsItems = listOf(
 //        SettingsItem(
 //            title = "Profile",
@@ -143,7 +147,7 @@ fun SettingsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Version ${BuildConfig.VERSION_NAME}",
+                    text = "Version 1",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

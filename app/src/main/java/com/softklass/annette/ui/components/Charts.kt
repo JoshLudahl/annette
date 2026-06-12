@@ -1,7 +1,6 @@
 package com.softklass.annette.ui.components
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,26 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.softklass.annette.core.ui.currency.shortCurrencyFormatter
 import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetValues
 import java.text.SimpleDateFormat
@@ -75,73 +58,7 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
     if (xValues.isEmpty() || yValues.isEmpty() || xValues.size < 2) {
         EmptyChart()
     } else {
-        // Compute an adaptive Y range so the line isn't pinned to the top when the data range is small
-        val yMin = yValues.minOrNull() ?: 0f
-        val yMax = yValues.maxOrNull() ?: 0f
-        val yRange = (yMax - yMin).let { if (it <= 0f) 0f else it }
-        val yPadding = when {
-            yRange > 0f -> (yRange * 0.1f).coerceAtLeast(1f)
-            else -> 1f
-        }
-        // Normalize values relative to a shifted baseline so the Y-axis fits data tightly.
-        val yBase = yMin - yPadding
-        val yValuesShifted = yValues.map { it - yBase }
-
-        val modelProducer = remember { CartesianChartModelProducer() }
-        LaunchedEffect(xValues, yValuesShifted) {
-            modelProducer.runTransaction {
-                lineSeries { series(xValues, yValuesShifted) }
-            }
-        }
-
-        val axisLabelComponent =
-            rememberAxisLabelComponent(color = MaterialTheme.colorScheme.onSurface)
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberLineCartesianLayer(
-                    lineProvider = LineCartesianLayer.LineProvider.series(
-                        vicoTheme.lineCartesianLayerColors.map {
-                            LineCartesianLayer.rememberLine(
-                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
-                                fill = LineCartesianLayer.LineFill.single(
-                                    fill(
-                                        MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                            )
-                        }
-                    )
-                ),
-                startAxis = VerticalAxis.rememberStart(
-                    label = axisLabelComponent,
-                    valueFormatter = { _, value, _ ->
-                        // Convert back from normalized to real-world value.
-                        val real = value + yBase
-
-                        "${shortCurrencyFormatter.format(real)}"
-                    },
-                    guideline = null
-                ),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    label = axisLabelComponent,
-                    valueFormatter = { _, value, _ ->
-                        // Vico forbids returning an empty string here. Coerce index within bounds and provide non-empty fallback.
-                        val safeLabels = xLabels
-                        if (safeLabels.isEmpty()) {
-                            "-"
-                        } else {
-                            val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
-                            safeLabels[index].ifBlank { "-" }
-                        }
-                    },
-                    guideline = null
-                ),
-            ),
-            modelProducer,
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-        )
+        EmptyChart()
     }
 }
 
@@ -163,79 +80,7 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
     if (latestPerDay.size < 2 || values.isEmpty()) {
         EmptyChart()
     } else {
-        // Build chart points and labels
-        val labelFormatter = remember { SimpleDateFormat("dd-MMM-yy", Locale.getDefault()) }
-        val xValues = remember(latestPerDay) { latestPerDay.indices.map { it.toFloat() } }
-        val yValues = remember(latestPerDay) { latestPerDay.map { it.value.toFloat() } }
-        val xLabels =
-            remember(latestPerDay) { latestPerDay.map { labelFormatter.format(Date(it.date)) } }
-
-        // Compute an adaptive Y range so the line isn't pinned to the top when the data range is small
-        val yMin = yValues.minOrNull() ?: 0f
-        val yMax = yValues.maxOrNull() ?: 0f
-        val yRange = (yMax - yMin).let { if (it <= 0f) 0f else it }
-        val yPadding = when {
-            yRange > 0f -> (yRange * 0.1f).coerceAtLeast(1f)
-            else -> 1f
-        }
-
-        // Normalize values relative to a shifted baseline so the Y-axis fits data tightly.
-        val yBase = yMin - yPadding
-        val yValuesShifted = yValues.map { it - yBase }
-
-        val modelProducer = remember { CartesianChartModelProducer() }
-        LaunchedEffect(xValues, yValuesShifted) {
-            modelProducer.runTransaction {
-                lineSeries { series(xValues, yValuesShifted) }
-            }
-        }
-
-        val axisLabelComponent =
-            rememberAxisLabelComponent(color = MaterialTheme.colorScheme.onSurface)
-        CartesianChartHost(
-            rememberCartesianChart(
-                rememberLineCartesianLayer(
-                    lineProvider = LineCartesianLayer.LineProvider.series(
-                        vicoTheme.lineCartesianLayerColors.map {
-                            LineCartesianLayer.rememberLine(
-                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
-                                fill = LineCartesianLayer.LineFill.single(
-                                    fill(
-                                        MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                            )
-                        }
-                    )
-                ),
-                startAxis = VerticalAxis.rememberStart(
-                    label = axisLabelComponent,
-                    valueFormatter = { _, value, _ ->
-                        val real = value + yBase
-                        "${shortCurrencyFormatter.format(real)}"
-                    },
-                    guideline = null
-                ),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    label = axisLabelComponent,
-                    valueFormatter = { _, value, _ ->
-                        // Ensure non-empty label per Vico requirements
-                        val safeLabels = xLabels
-                        if (safeLabels.isEmpty()) {
-                            "-"
-                        } else {
-                            val index = value.toInt().coerceIn(0, safeLabels.lastIndex)
-                            safeLabels[index].ifBlank { "-" }
-                        }
-                    },
-                    guideline = null
-                ),
-            ),
-            modelProducer,
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-        )
+        EmptyChart()
     }
 }
 
@@ -263,4 +108,3 @@ fun EmptyChart() {
         )
     }
 }
-
