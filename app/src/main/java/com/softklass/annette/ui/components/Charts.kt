@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.softklass.annette.data.database.dao.HistoricalTotal
 import com.softklass.annette.data.database.entities.BalanceSheetValues
+import io.github.hdcharts.core.model.toChartData
+import io.github.hdcharts.line.LineChart
+import io.github.hdcharts.line.LineChartDefaults
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,7 +61,19 @@ fun HistoricalChart(historicalTotals: List<HistoricalTotal>) {
     if (xValues.isEmpty() || yValues.isEmpty() || xValues.size < 2) {
         EmptyChart()
     } else {
-        EmptyChart()
+        val chartData = remember(yValues) {
+            yValues.map { it.toDouble() }.toChartData(
+                categories = xLabels
+            )
+        }
+
+        LineChart(
+            data = chartData,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(16.dp)
+        )
     }
 }
 
@@ -80,7 +95,22 @@ fun ItemHistoricalChart(values: List<BalanceSheetValues>) {
     if (latestPerDay.size < 2 || values.isEmpty()) {
         EmptyChart()
     } else {
-        EmptyChart()
+        val yValues = latestPerDay.map { it.value.toDouble() }
+        val xLabels = latestPerDay.map { dayKeyFormatter.format(Date(it.date)) }
+
+        val chartData = remember(yValues) {
+            yValues.toChartData(
+                categories = xLabels
+            )
+        }
+
+        LineChart(
+            data = chartData,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(16.dp)
+        )
     }
 }
 

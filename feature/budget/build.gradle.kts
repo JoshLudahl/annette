@@ -12,6 +12,7 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.softklass.annette.feature.budget"
     compileSdk = rootProject.extra["compileSdk"] as Int
+    compileSdkMinor = 2
 
     defaultConfig {
         minSdk = rootProject.extra["minSdk"] as Int
@@ -70,9 +71,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
-    // VICO CHARTS
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m3)
+    // HDCharts
+    implementation(libs.hdcharts.core)
+    implementation(libs.hdcharts.line)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
