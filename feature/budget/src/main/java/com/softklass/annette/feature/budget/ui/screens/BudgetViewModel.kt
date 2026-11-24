@@ -21,17 +21,18 @@ class BudgetViewModel @Inject constructor(
     private val budgetDao: BudgetDao
 ) : ViewModel() {
 
-    private val _budgetIncomeItems = getBudgetEntitiesByType(BudgetItemType.INCOME)
-    val budgetIncomeItems: StateFlow<List<BudgetEntity>>
-        get() = _budgetIncomeItems.stateIn(
+    // Cached once per ViewModel. Creating these with `stateIn` inside a getter would return a new
+    // StateFlow on every screen read, restarting `collectAsState` and recomposing the screen every
+    // frame while it is visible.
+    val budgetIncomeItems: StateFlow<List<BudgetEntity>> =
+        getBudgetEntitiesByType(BudgetItemType.INCOME).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList(),
         )
 
-    private val _budgetExpenseItems = getBudgetEntitiesByType(BudgetItemType.EXPENSE)
-    val budgetExpenseItems: StateFlow<List<BudgetEntity>>
-        get() = _budgetExpenseItems.stateIn(
+    val budgetExpenseItems: StateFlow<List<BudgetEntity>> =
+        getBudgetEntitiesByType(BudgetItemType.EXPENSE).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList(),

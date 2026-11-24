@@ -3,6 +3,7 @@ package com.softklass.theme.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -13,6 +14,134 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+
+/**
+ * Extra semantic colours used by Annette's custom chrome, beyond the Material roles.
+ *
+ * Material still owns surfaces, text and primary actions. These colours cover the pieces the
+ * reference design relies on: the berry hero, the ink insight banner, warning states and the
+ * categorical chart palette.
+ */
+@Immutable
+data class BrandColors(
+    val heroStart: Color,
+    val heroEnd: Color,
+    val onHero: Color,
+    val heroGlow: Color,
+    val heroMuted: Color,
+    val insightBackground: Color,
+    val onInsight: Color,
+    val insightMuted: Color,
+    val positive: Color,
+    val positiveSoft: Color,
+    val negative: Color,
+    val negativeSoft: Color,
+    val warning: Color,
+    val warningEnd: Color,
+    val onWarning: Color,
+    val warningSoft: Color,
+    val berry: Color,
+    val berrySoft: Color,
+    val chart: ChartPalette,
+)
+
+@Immutable
+data class ChartPalette(
+    val berry: Color,
+    val sky: Color,
+    val mint: Color,
+    val sun: Color,
+    val coral: Color,
+    val plum: Color,
+    val lilac: Color,
+    val neutral: Color,
+) {
+    val all: List<Color> = listOf(berry, sky, mint, sun, coral, plum, lilac)
+}
+
+private val lightChartPalette = ChartPalette(
+    berry = ChartBerry,
+    sky = ChartSky,
+    mint = ChartMint,
+    sun = ChartSun,
+    coral = ChartCoral,
+    plum = ChartPlum,
+    lilac = ChartLilac,
+    neutral = ChartNeutral,
+)
+
+private val darkChartPalette = ChartPalette(
+    berry = Color(0xFFB4B3FF),
+    sky = Color(0xFF8ED7FF),
+    mint = Color(0xFF6EE7B7),
+    sun = Color(0xFFFFD977),
+    coral = Color(0xFFFFA79A),
+    plum = Color(0xFFE68CD6),
+    lilac = Color(0xFFC9B6FF),
+    neutral = Color(0xFF2B2A3D),
+)
+
+val lightBrandColors = BrandColors(
+    heroStart = HeroStart,
+    heroEnd = HeroEnd,
+    onHero = Color.White,
+    heroGlow = Color(0x26FFFFFF),
+    heroMuted = HeroMuted,
+    insightBackground = InsightBlack,
+    onInsight = Color.White,
+    insightMuted = InsightMuted,
+    positive = Positive,
+    positiveSoft = PositiveSoft,
+    negative = Negative,
+    negativeSoft = NegativeSoft,
+    warning = Warning,
+    warningEnd = WarningDeep,
+    onWarning = Ink,
+    warningSoft = WarningSoft,
+    berry = Berry,
+    berrySoft = BerrySoft,
+    chart = lightChartPalette,
+)
+
+val darkBrandColors = BrandColors(
+    heroStart = Color(0xFF4A46D6),
+    heroEnd = Color(0xFF25216E),
+    onHero = Color.White,
+    heroGlow = Color(0x2EFFFFFF),
+    heroMuted = Color(0xFFC9C4FF),
+    insightBackground = Color(0xFFF2F1FA),
+    onInsight = Ink,
+    insightMuted = Color(0xFF5E5D78),
+    positive = Color(0xFF6EE7B7),
+    positiveSoft = Color(0xFF0B3B2A),
+    negative = Color(0xFFFFA79A),
+    negativeSoft = Color(0xFF40161A),
+    warning = Color(0xFFFFD977),
+    warningEnd = Color(0xFFF0B84A),
+    onWarning = Color(0xFF2A1208),
+    warningSoft = Color(0xFF3B2A0D),
+    berry = Color(0xFFB4B3FF),
+    berrySoft = Color(0xFF2C2A70),
+    chart = darkChartPalette,
+)
+
+val LocalBrandColors = staticCompositionLocalOf { lightBrandColors }
+
+object BrandTheme {
+    val colors: BrandColors
+        @Composable
+        get() = LocalBrandColors.current
+}
+
+@Immutable
+data class ColorFamily(
+    val color: Color,
+    val onColor: Color,
+    val colorContainer: Color,
+    val onColorContainer: Color,
+)
 
 @Immutable
 data class ExtendedColorScheme(
@@ -99,382 +228,48 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-private val mediumContrastLightColorScheme = lightColorScheme(
-    primary = primaryLightMediumContrast,
-    onPrimary = onPrimaryLightMediumContrast,
-    primaryContainer = primaryContainerLightMediumContrast,
-    onPrimaryContainer = onPrimaryContainerLightMediumContrast,
-    secondary = secondaryLightMediumContrast,
-    onSecondary = onSecondaryLightMediumContrast,
-    secondaryContainer = secondaryContainerLightMediumContrast,
-    onSecondaryContainer = onSecondaryContainerLightMediumContrast,
-    tertiary = tertiaryLightMediumContrast,
-    onTertiary = onTertiaryLightMediumContrast,
-    tertiaryContainer = tertiaryContainerLightMediumContrast,
-    onTertiaryContainer = onTertiaryContainerLightMediumContrast,
-    error = errorLightMediumContrast,
-    onError = onErrorLightMediumContrast,
-    errorContainer = errorContainerLightMediumContrast,
-    onErrorContainer = onErrorContainerLightMediumContrast,
-    background = backgroundLightMediumContrast,
-    onBackground = onBackgroundLightMediumContrast,
-    surface = surfaceLightMediumContrast,
-    onSurface = onSurfaceLightMediumContrast,
-    surfaceVariant = surfaceVariantLightMediumContrast,
-    onSurfaceVariant = onSurfaceVariantLightMediumContrast,
-    outline = outlineLightMediumContrast,
-    outlineVariant = outlineVariantLightMediumContrast,
-    scrim = scrimLightMediumContrast,
-    inverseSurface = inverseSurfaceLightMediumContrast,
-    inverseOnSurface = inverseOnSurfaceLightMediumContrast,
-    inversePrimary = inversePrimaryLightMediumContrast,
-    surfaceDim = surfaceDimLightMediumContrast,
-    surfaceBright = surfaceBrightLightMediumContrast,
-    surfaceContainerLowest = surfaceContainerLowestLightMediumContrast,
-    surfaceContainerLow = surfaceContainerLowLightMediumContrast,
-    surfaceContainer = surfaceContainerLightMediumContrast,
-    surfaceContainerHigh = surfaceContainerHighLightMediumContrast,
-    surfaceContainerHighest = surfaceContainerHighestLightMediumContrast,
-)
-
-private val highContrastLightColorScheme = lightColorScheme(
-    primary = primaryLightHighContrast,
-    onPrimary = onPrimaryLightHighContrast,
-    primaryContainer = primaryContainerLightHighContrast,
-    onPrimaryContainer = onPrimaryContainerLightHighContrast,
-    secondary = secondaryLightHighContrast,
-    onSecondary = onSecondaryLightHighContrast,
-    secondaryContainer = secondaryContainerLightHighContrast,
-    onSecondaryContainer = onSecondaryContainerLightHighContrast,
-    tertiary = tertiaryLightHighContrast,
-    onTertiary = onTertiaryLightHighContrast,
-    tertiaryContainer = tertiaryContainerLightHighContrast,
-    onTertiaryContainer = onTertiaryContainerLightHighContrast,
-    error = errorLightHighContrast,
-    onError = onErrorLightHighContrast,
-    errorContainer = errorContainerLightHighContrast,
-    onErrorContainer = onErrorContainerLightHighContrast,
-    background = backgroundLightHighContrast,
-    onBackground = onBackgroundLightHighContrast,
-    surface = surfaceLightHighContrast,
-    onSurface = onSurfaceLightHighContrast,
-    surfaceVariant = surfaceVariantLightHighContrast,
-    onSurfaceVariant = onSurfaceVariantLightHighContrast,
-    outline = outlineLightHighContrast,
-    outlineVariant = outlineVariantLightHighContrast,
-    scrim = scrimLightHighContrast,
-    inverseSurface = inverseSurfaceLightHighContrast,
-    inverseOnSurface = inverseOnSurfaceLightHighContrast,
-    inversePrimary = inversePrimaryLightHighContrast,
-    surfaceDim = surfaceDimLightHighContrast,
-    surfaceBright = surfaceBrightLightHighContrast,
-    surfaceContainerLowest = surfaceContainerLowestLightHighContrast,
-    surfaceContainerLow = surfaceContainerLowLightHighContrast,
-    surfaceContainer = surfaceContainerLightHighContrast,
-    surfaceContainerHigh = surfaceContainerHighLightHighContrast,
-    surfaceContainerHighest = surfaceContainerHighestLightHighContrast,
-)
-
-private val mediumContrastDarkColorScheme = darkColorScheme(
-    primary = primaryDarkMediumContrast,
-    onPrimary = onPrimaryDarkMediumContrast,
-    primaryContainer = primaryContainerDarkMediumContrast,
-    onPrimaryContainer = onPrimaryContainerDarkMediumContrast,
-    secondary = secondaryDarkMediumContrast,
-    onSecondary = onSecondaryDarkMediumContrast,
-    secondaryContainer = secondaryContainerDarkMediumContrast,
-    onSecondaryContainer = onSecondaryContainerDarkMediumContrast,
-    tertiary = tertiaryDarkMediumContrast,
-    onTertiary = onTertiaryDarkMediumContrast,
-    tertiaryContainer = tertiaryContainerDarkMediumContrast,
-    onTertiaryContainer = onTertiaryContainerDarkMediumContrast,
-    error = errorDarkMediumContrast,
-    onError = onErrorDarkMediumContrast,
-    errorContainer = errorContainerDarkMediumContrast,
-    onErrorContainer = onErrorContainerDarkMediumContrast,
-    background = backgroundDarkMediumContrast,
-    onBackground = onBackgroundDarkMediumContrast,
-    surface = surfaceDarkMediumContrast,
-    onSurface = onSurfaceDarkMediumContrast,
-    surfaceVariant = surfaceVariantDarkMediumContrast,
-    onSurfaceVariant = onSurfaceVariantDarkMediumContrast,
-    outline = outlineDarkMediumContrast,
-    outlineVariant = outlineVariantDarkMediumContrast,
-    scrim = scrimDarkMediumContrast,
-    inverseSurface = inverseSurfaceDarkMediumContrast,
-    inverseOnSurface = inverseOnSurfaceDarkMediumContrast,
-    inversePrimary = inversePrimaryDarkMediumContrast,
-    surfaceDim = surfaceDimDarkMediumContrast,
-    surfaceBright = surfaceBrightDarkMediumContrast,
-    surfaceContainerLowest = surfaceContainerLowestDarkMediumContrast,
-    surfaceContainerLow = surfaceContainerLowDarkMediumContrast,
-    surfaceContainer = surfaceContainerDarkMediumContrast,
-    surfaceContainerHigh = surfaceContainerHighDarkMediumContrast,
-    surfaceContainerHighest = surfaceContainerHighestDarkMediumContrast,
-)
-
-private val highContrastDarkColorScheme = darkColorScheme(
-    primary = primaryDarkHighContrast,
-    onPrimary = onPrimaryDarkHighContrast,
-    primaryContainer = primaryContainerDarkHighContrast,
-    onPrimaryContainer = onPrimaryContainerDarkHighContrast,
-    secondary = secondaryDarkHighContrast,
-    onSecondary = onSecondaryDarkHighContrast,
-    secondaryContainer = secondaryContainerDarkHighContrast,
-    onSecondaryContainer = onSecondaryContainerDarkHighContrast,
-    tertiary = tertiaryDarkHighContrast,
-    onTertiary = onTertiaryDarkHighContrast,
-    tertiaryContainer = tertiaryContainerDarkHighContrast,
-    onTertiaryContainer = onTertiaryContainerDarkHighContrast,
-    error = errorDarkHighContrast,
-    onError = onErrorDarkHighContrast,
-    errorContainer = errorContainerDarkHighContrast,
-    onErrorContainer = onErrorContainerDarkHighContrast,
-    background = backgroundDarkHighContrast,
-    onBackground = onBackgroundDarkHighContrast,
-    surface = surfaceDarkHighContrast,
-    onSurface = onSurfaceDarkHighContrast,
-    surfaceVariant = surfaceVariantDarkHighContrast,
-    onSurfaceVariant = onSurfaceVariantDarkHighContrast,
-    outline = outlineDarkHighContrast,
-    outlineVariant = outlineVariantDarkHighContrast,
-    scrim = scrimDarkHighContrast,
-    inverseSurface = inverseSurfaceDarkHighContrast,
-    inverseOnSurface = inverseOnSurfaceDarkHighContrast,
-    inversePrimary = inversePrimaryDarkHighContrast,
-    surfaceDim = surfaceDimDarkHighContrast,
-    surfaceBright = surfaceBrightDarkHighContrast,
-    surfaceContainerLowest = surfaceContainerLowestDarkHighContrast,
-    surfaceContainerLow = surfaceContainerLowDarkHighContrast,
-    surfaceContainer = surfaceContainerDarkHighContrast,
-    surfaceContainerHigh = surfaceContainerHighDarkHighContrast,
-    surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
-)
-
-
 val extendedLight = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightLight,
-        onBrightLight,
-        brightContainerLight,
-        onBrightContainerLight,
-    ),
-    blackboard = ColorFamily(
-        blackboardLight,
-        onBlackboardLight,
-        blackboardContainerLight,
-        onBlackboardContainerLight,
-    ),
-    liability = ColorFamily(
-        liabilityLight,
-        onLiabilityLight,
-        liabilityContainerLight,
-        onLiabilityContainerLight,
-    ),
-    asset = ColorFamily(
-        assetLight,
-        onAssetLight,
-        assetContainerLight,
-        onAssetContainerLight,
-    ),
-    cta = ColorFamily(
-        ctaLight,
-        onCtaLight,
-        ctaContainerLight,
-        onCtaContainerLight,
-    ),
+    bright = ColorFamily(brightLight, onBrightLight, brightContainerLight, onBrightContainerLight),
+    blackboard = ColorFamily(blackboardLight, onBlackboardLight, blackboardContainerLight, onBlackboardContainerLight),
+    liability = ColorFamily(liabilityLight, onLiabilityLight, liabilityContainerLight, onLiabilityContainerLight),
+    asset = ColorFamily(assetLight, onAssetLight, assetContainerLight, onAssetContainerLight),
+    cta = ColorFamily(ctaLight, onCtaLight, ctaContainerLight, onCtaContainerLight),
 )
 
 val extendedDark = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightDark,
-        onBrightDark,
-        brightContainerDark,
-        onBrightContainerDark,
-    ),
-    blackboard = ColorFamily(
-        blackboardDark,
-        onBlackboardDark,
-        blackboardContainerDark,
-        onBlackboardContainerDark,
-    ),
-    liability = ColorFamily(
-        liabilityDark,
-        onLiabilityDark,
-        liabilityContainerDark,
-        onLiabilityContainerDark,
-    ),
-    asset = ColorFamily(
-        assetDark,
-        onAssetDark,
-        assetContainerDark,
-        onAssetContainerDark,
-    ),
-    cta = ColorFamily(
-        ctaDark,
-        onCtaDark,
-        ctaContainerDark,
-        onCtaContainerDark,
-    ),
-)
-
-val extendedLightMediumContrast = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightLightMediumContrast,
-        onBrightLightMediumContrast,
-        brightContainerLightMediumContrast,
-        onBrightContainerLightMediumContrast,
-    ),
-    blackboard = ColorFamily(
-        blackboardLightMediumContrast,
-        onBlackboardLightMediumContrast,
-        blackboardContainerLightMediumContrast,
-        onBlackboardContainerLightMediumContrast,
-    ),
-    liability = ColorFamily(
-        liabilityLightMediumContrast,
-        onLiabilityLightMediumContrast,
-        liabilityContainerLightMediumContrast,
-        onLiabilityContainerLightMediumContrast,
-    ),
-    asset = ColorFamily(
-        assetLightMediumContrast,
-        onAssetLightMediumContrast,
-        assetContainerLightMediumContrast,
-        onAssetContainerLightMediumContrast,
-    ),
-    cta = ColorFamily(
-        ctaLightMediumContrast,
-        onCtaLightMediumContrast,
-        ctaContainerLightMediumContrast,
-        onCtaContainerLightMediumContrast,
-    ),
-)
-
-val extendedLightHighContrast = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightLightHighContrast,
-        onBrightLightHighContrast,
-        brightContainerLightHighContrast,
-        onBrightContainerLightHighContrast,
-    ),
-    blackboard = ColorFamily(
-        blackboardLightHighContrast,
-        onBlackboardLightHighContrast,
-        blackboardContainerLightHighContrast,
-        onBlackboardContainerLightHighContrast,
-    ),
-    liability = ColorFamily(
-        liabilityLightHighContrast,
-        onLiabilityLightHighContrast,
-        liabilityContainerLightHighContrast,
-        onLiabilityContainerLightHighContrast,
-    ),
-    asset = ColorFamily(
-        assetLightHighContrast,
-        onAssetLightHighContrast,
-        assetContainerLightHighContrast,
-        onAssetContainerLightHighContrast,
-    ),
-    cta = ColorFamily(
-        ctaLightHighContrast,
-        onCtaLightHighContrast,
-        ctaContainerLightHighContrast,
-        onCtaContainerLightHighContrast,
-    ),
-)
-
-val extendedDarkMediumContrast = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightDarkMediumContrast,
-        onBrightDarkMediumContrast,
-        brightContainerDarkMediumContrast,
-        onBrightContainerDarkMediumContrast,
-    ),
-    blackboard = ColorFamily(
-        blackboardDarkMediumContrast,
-        onBlackboardDarkMediumContrast,
-        blackboardContainerDarkMediumContrast,
-        onBlackboardContainerDarkMediumContrast,
-    ),
-    liability = ColorFamily(
-        liabilityDarkMediumContrast,
-        onLiabilityDarkMediumContrast,
-        liabilityContainerDarkMediumContrast,
-        onLiabilityContainerDarkMediumContrast,
-    ),
-    asset = ColorFamily(
-        assetDarkMediumContrast,
-        onAssetDarkMediumContrast,
-        assetContainerDarkMediumContrast,
-        onAssetContainerDarkMediumContrast,
-    ),
-    cta = ColorFamily(
-        ctaDarkMediumContrast,
-        onCtaDarkMediumContrast,
-        ctaContainerDarkMediumContrast,
-        onCtaContainerDarkMediumContrast,
-    ),
-)
-
-val extendedDarkHighContrast = ExtendedColorScheme(
-    bright = ColorFamily(
-        brightDarkHighContrast,
-        onBrightDarkHighContrast,
-        brightContainerDarkHighContrast,
-        onBrightContainerDarkHighContrast,
-    ),
-    blackboard = ColorFamily(
-        blackboardDarkHighContrast,
-        onBlackboardDarkHighContrast,
-        blackboardContainerDarkHighContrast,
-        onBlackboardContainerDarkHighContrast,
-    ),
-    liability = ColorFamily(
-        liabilityDarkHighContrast,
-        onLiabilityDarkHighContrast,
-        liabilityContainerDarkHighContrast,
-        onLiabilityContainerDarkHighContrast,
-    ),
-    asset = ColorFamily(
-        assetDarkHighContrast,
-        onAssetDarkHighContrast,
-        assetContainerDarkHighContrast,
-        onAssetContainerDarkHighContrast,
-    ),
-    cta = ColorFamily(
-        ctaDarkHighContrast,
-        onCtaDarkHighContrast,
-        ctaContainerDarkHighContrast,
-        onCtaContainerDarkHighContrast,
-    ),
-)
-
-
-@Immutable
-data class ColorFamily(
-    val color: Color,
-    val onColor: Color,
-    val colorContainer: Color,
-    val onColorContainer: Color
+    bright = ColorFamily(brightDark, onBrightDark, brightContainerDark, onBrightContainerDark),
+    blackboard = ColorFamily(blackboardDark, onBlackboardDark, blackboardContainerDark, onBlackboardContainerDark),
+    liability = ColorFamily(liabilityDark, onLiabilityDark, liabilityContainerDark, onLiabilityContainerDark),
+    asset = ColorFamily(assetDark, onAssetDark, assetContainerDark, onAssetContainerDark),
+    cta = ColorFamily(ctaDark, onCtaDark, ctaContainerDark, onCtaContainerDark),
 )
 
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+/**
+ * Rounded, friendly shape scale. Cards use [Shapes.large] / [Shapes.extraLarge], pills and icon
+ * tiles use circles or the smaller sizes.
+ */
+val AppShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(18.dp),
+    large = RoundedCornerShape(24.dp),
+    extraLarge = RoundedCornerShape(32.dp),
+)
+
 @Composable
 fun AnnetteTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColorEnabled: Boolean = true,
-    content:
-    @Composable () -> Unit,
+    // Dynamic colour is opt-in; the Annette palette is the default so the brand stays consistent.
+    dynamicColorEnabled: Boolean = false,
+    content: @Composable () -> Unit,
 ) {
     val useDarkTheme = darkTheme
 
     val colorScheme = when {
-        // Disable this part to use the default colors
         dynamicColorEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
@@ -484,34 +279,23 @@ fun AnnetteTheme(
         else -> lightScheme
     }
 
-    val currentExtendedColorScheme = when {
-        // You could also have dynamic extended colors if you generate them based on Material You
-        // For now, using the predefined ones:
-        useDarkTheme -> {
-            // Here you'd select between extendedDark, extendedDarkMediumContrast, extendedDarkHighContrast
-            // For simplicity, I'll pick extendedDark. You'll need to add logic for contrast.
-            extendedDark // Or extendedDarkMediumContrast, extendedDarkHighContrast
-        }
+    val currentExtendedColorScheme = if (useDarkTheme) extendedDark else extendedLight
+    val currentBrandColors = if (useDarkTheme) darkBrandColors else lightBrandColors
 
-        else -> {
-            // Similarly for light themes
-            extendedLight // Or extendedLightMediumContrast, extendedLightHighContrast
-        }
-    }
-
-    CompositionLocalProvider(LocalExtendedColors provides currentExtendedColorScheme) {
+    CompositionLocalProvider(
+        LocalExtendedColors provides currentExtendedColorScheme,
+        LocalBrandColors provides currentBrandColors,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = AppTypography,
+            shapes = AppShapes,
             content = content,
         )
     }
 }
 
 val LocalExtendedColors = staticCompositionLocalOf<ExtendedColorScheme> {
-    // Provide a safe default to avoid runtime crashes when a provider isn't set.
-    // This mirrors the app module's behavior and ensures core/feature UIs can access colors
-    // even if not wrapped by this module's AnnetteTheme.
     extendedLight
 }
 

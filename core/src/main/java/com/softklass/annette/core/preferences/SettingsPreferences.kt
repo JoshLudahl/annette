@@ -27,7 +27,7 @@ class SettingsPreferences @Inject constructor(
     }
 
     val dynamicColorEnabled: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences[DYNAMIC_COLOR_ENABLED] ?: true
+        preferences[DYNAMIC_COLOR_ENABLED] ?: false
     }
 
     val themeMode: Flow<ThemeMode> = dataStore.data.map { preferences ->

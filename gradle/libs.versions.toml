@@ -61,6 +61,7 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 # HDCharts
 hdcharts-core = { group = "io.github.hdcharts", name = "core", version.ref = "hdcharts" }
 hdcharts-line = { group = "io.github.hdcharts", name = "line", version.ref = "hdcharts" }
+hdcharts-gauge = { group = "io.github.hdcharts", name = "gauge", version.ref = "hdcharts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

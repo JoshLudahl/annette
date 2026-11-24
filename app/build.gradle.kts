@@ -99,6 +99,9 @@ dependencies {
     // HDCharts
     implementation(libs.hdcharts.core)
     implementation(libs.hdcharts.line)
+    implementation(libs.hdcharts.gauge) {
+        exclude(group = "androidx.compose.ui", module = "ui-tooling")
+    }
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

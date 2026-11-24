@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.ShowChart
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -37,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -50,6 +52,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -57,6 +63,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.softklass.annette.core.ui.currency.amountFormatted
+import com.softklass.annette.core.ui.currency.currencyFormatter
+import com.softklass.annette.core.ui.design.AnnettePageHeader
+import com.softklass.annette.core.ui.design.CircleIconButton
+import com.softklass.annette.core.ui.design.EmptyState
+import com.softklass.annette.core.ui.design.GroupedSurface
+import com.softklass.annette.core.ui.design.PastelIconTile
+import com.softklass.annette.core.ui.design.SectionHeader
+import com.softklass.annette.core.ui.design.categoryColors
+import com.softklass.annette.core.ui.design.categoryIcon
+import com.softklass.theme.ui.theme.BrandTheme
 import com.softklass.annette.data.database.entities.BalanceSheetValues
 import com.softklass.annette.ui.screens.viewmodels.ItemDetailViewModel
 import java.text.NumberFormat
@@ -93,38 +109,36 @@ fun ItemDetailScreen(
         return input.isNotBlank() && input.all { it.isLetter() || it.isWhitespace() }
     }
 
+    val currentValue = historicalValues.maxByOrNull { it.date }?.value
+    val resolvedType = item?.type ?: itemType
+    val isLiability = resolvedType.equals("liability", ignoreCase = true)
+    val accent = if (isLiability) BrandTheme.colors.negative else BrandTheme.colors.positive
+    val accentContainer = if (isLiability) BrandTheme.colors.negativeSoft else BrandTheme.colors.positiveSoft
+
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(item?.name ?: "Item Detail")
-                        Text(
-                            text = item?.category ?: "Category",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
-                    }
-                },
+            AnnettePageHeader(
+                title = item?.name ?: itemName.ifBlank { "Item detail" },
+                subtitle = item?.category ?: itemCategory.ifBlank { "Uncategorized" },
+                onBack = onNavigateBack,
+                modifier = Modifier.statusBarsPadding(),
                 actions = {
-                    IconButton(onClick = { showEditDialog = true }) {
-                        Icon(Icons.Rounded.Edit, contentDescription = "Edit Item")
-                    }
+                    CircleIconButton(
+                        icon = Icons.Rounded.Edit,
+                        onClick = { showEditDialog = true },
+                        contentDescription = "Edit item",
+                    )
                 },
-                // Remove extra top inset to eliminate the gap above the toolbar
-                windowInsets = WindowInsets(0)
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.showAddValueDialog() }
+                onClick = { viewModel.showAddValueDialog() },
+                containerColor = BrandTheme.colors.berry,
+                contentColor = androidx.compose.ui.graphics.Color.White,
             ) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add Value")
+                Icon(Icons.Rounded.Add, contentDescription = "Add value")
             }
         }
     ) { paddingValues ->
@@ -132,33 +146,64 @@ fun ItemDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 20.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            // Historical Chart
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                if (historicalValues.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+            Spacer(Modifier.height(8.dp))
+
+            GroupedSurface {
+                Row(
+                    modifier = Modifier.padding(18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PastelIconTile(
+                        icon = categoryIcon(item?.category ?: itemCategory),
+                        tint = accent,
+                        container = accentContainer,
+                        size = 46.dp,
+                        iconSize = 22.dp,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "No historical data yet",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = if (isLiability) "Current liability" else "Current value",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = currencyFormatter.format(currentValue ?: 0.0),
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
+                    if (historicalValues.isNotEmpty()) {
+                        Text(
+                            text = "${historicalValues.size} updates",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            SectionHeader(title = "Value history")
+            Spacer(Modifier.height(10.dp))
+
+            GroupedSurface {
+                if (historicalValues.isEmpty()) {
+                    EmptyState(
+                        icon = Icons.Rounded.ShowChart,
+                        title = "No value history",
+                        message = "Add a value to start tracking how this item changes over time.",
+                    )
                 } else {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .height(220.dp)
                             .padding(8.dp)
                     ) {
                         com.softklass.annette.ui.components.ItemHistoricalChart(historicalValues)
@@ -166,29 +211,23 @@ fun ItemDetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(22.dp))
 
-            // Historical Values List
-            Text(
-                text = "Historical Values",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+            SectionHeader(title = "Historical values")
+            Spacer(Modifier.height(10.dp))
 
             // Sort values by date ascending so we can calculate percent change
             val sortedValues = historicalValues.sortedBy { it.date }.reversed()
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(sortedValues) { item ->
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                sortedValues.forEach { valueItem ->
                     HistoricalValueItem(
-                        value = item,
-                        onLongClick = { viewModel.showDeleteDialog(item) }
+                        value = valueItem,
+                        onLongClick = { viewModel.showDeleteDialog(valueItem) }
                     )
                 }
             }
+            Spacer(Modifier.height(80.dp))
         }
     }
 
@@ -282,39 +321,37 @@ fun HistoricalValueItem(
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
-    Card(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = { /* Regular click - no action */ },
                 onLongClick = onLongClick
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
+        ),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 14.dp, vertical = 13.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Date (left)
             Text(
                 text = dateFormat.format(Date(value.date)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.weight(1f)) // Fill empty space if no percent
-
-            // Value (right)
+            Spacer(Modifier.weight(1f))
             Text(
                 text = currencyFormat.format(value.value),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.End
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

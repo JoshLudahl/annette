@@ -1,7 +1,7 @@
 package com.softklass.annette.ui.screens
 
-import android.R
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,201 +10,235 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.rounded.LightMode
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getString
-
+import com.softklass.annette.core.ui.design.AnnettePageHeader
+import com.softklass.annette.core.ui.design.GroupedSurface
+import com.softklass.annette.core.ui.design.PastelIconTile
+import com.softklass.annette.core.ui.design.SectionHeader
 import com.softklass.theme.ui.theme.AnnetteTheme
+import com.softklass.theme.ui.theme.BrandTheme
 
 data class SettingsItem(
     val title: String,
     val subtitle: String,
-    val icon: ImageVector,
-    val onClick: () -> Unit = {}
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val onClick: () -> Unit = {},
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onSettingsItemClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val settingsItems = listOf(
-//        SettingsItem(
-//            title = "Profile",
-//            subtitle = "Manage your personal information",
-//            icon = Icons.Default.Person
-//        ),
         SettingsItem(
             title = "Preferences",
-            subtitle = "App preferences and customization",
-            icon = Icons.Rounded.LightMode,
-            onClick = onSettingsItemClick
+            subtitle = "Theme, dynamic colour and appearance",
+            icon = Icons.Rounded.DarkMode,
+            onClick = onSettingsItemClick,
         ),
-//        SettingsItem(
-//            title = "Notifications",
-//            subtitle = "Manage notification preferences",
-//            icon = Icons.Default.Notifications
-//        ),
-//        SettingsItem(
-//            title = "Security",
-//            subtitle = "Privacy and security settings",
-//            icon = Icons.Default.Lock
-//        ),
-//        SettingsItem(
-//            title = "Help & Support",
-//            subtitle = "Get help and contact support",
-//            icon = Icons.Default.Star
-//        ),
-//        SettingsItem(
-//            title = "About",
-//            subtitle = "App version and information",
-//            icon = Icons.Default.Info
-//        )
     )
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .verticalScroll(rememberScrollState()),
     ) {
-        // Header
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Settings",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                Text(
-                    text = "Customize your Annette experience",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-        }
+        AnnettePageHeader(
+            title = "Settings",
+            subtitle = "Make Annette yours",
+        )
 
-        // Settings List
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(settingsItems.size) { index ->
-                SettingsItemCard(settingsItem = settingsItems[index])
-            }
-        }
+        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+            Spacer(Modifier.height(10.dp))
 
-        // App Version Footer
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Version 1",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            GroupedSurface {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PastelIconTile(
+                        icon = Icons.Rounded.Person,
+                        tint = BrandTheme.colors.berry,
+                        container = BrandTheme.colors.berrySoft,
+                        size = 46.dp,
+                        iconSize = 22.dp,
+                        shape = RoundedCornerShape(14.dp),
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    Column {
+                        Text(
+                            text = "Annette",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            text = "Your personal finance companion",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
+
+            Spacer(Modifier.height(24.dp))
+            SectionHeader(title = "Customize")
+            Spacer(Modifier.height(12.dp))
+
+            GroupedSurface {
+                settingsItems.forEachIndexed { index, item ->
+                    SettingsRow(item = item)
+                    if (index != settingsItems.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            SectionHeader(title = "About")
+            Spacer(Modifier.height(12.dp))
+
+            GroupedSurface {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PastelIconTile(
+                        icon = Icons.Rounded.Info,
+                        tint = BrandTheme.colors.chart.sky,
+                        container = BrandTheme.colors.chart.sky.copy(alpha = 0.14f),
+                        size = 40.dp,
+                        iconSize = 19.dp,
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    Column {
+                        Text(
+                            text = "Version",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            text = "Annette 0.02",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 14.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PastelIconTile(
+                        icon = Icons.Rounded.Settings,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        container = MaterialTheme.colorScheme.surfaceVariant,
+                        size = 40.dp,
+                        iconSize = 19.dp,
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    Text(
+                        text = "Built with Jetpack Compose",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(30.dp))
+            Text(
+                text = "Made with care for calmer money decisions.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
+            Spacer(Modifier.height(120.dp))
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsItemCard(settingsItem: SettingsItem) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = settingsItem.onClick
+private fun SettingsRow(item: SettingsItem) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = item.onClick)
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = settingsItem.icon,
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary
+        PastelIconTile(
+            icon = item.icon,
+            tint = BrandTheme.colors.berry,
+            container = BrandTheme.colors.berrySoft,
+            size = 42.dp,
+            iconSize = 20.dp,
+            shape = RoundedCornerShape(13.dp),
+        )
+        Spacer(Modifier.size(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = settingsItem.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = settingsItem.subtitle,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Text(
+                text = item.subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
+        Icon(
+            imageVector = Icons.Rounded.ChevronRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(18.dp),
+        )
     }
 }
 
 @PreviewLightDark()
 @Composable
-fun SettingsScreenPreview() {
+private fun SettingsScreenPreview() {
     AnnetteTheme {
-        SettingsScreen(
-            onSettingsItemClick = { },
-            modifier = Modifier
-        )
+        SettingsScreen(onSettingsItemClick = {})
     }
 }
