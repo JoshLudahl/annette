@@ -9,6 +9,7 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.softklass.annette.core"
     compileSdk = rootProject.extra["compileSdk"] as Int
+    compileSdkMinor = 2
 
     defaultConfig {
         minSdk = rootProject.extra["minSdk"] as Int

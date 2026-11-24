@@ -12,6 +12,7 @@ plugins {
 configure<ApplicationExtension> {
     namespace = "com.softklass.annette"
     compileSdk = rootProject.extra["compileSdk"] as Int
+    compileSdkMinor = 2
 
     defaultConfig {
         applicationId = "com.softklass.annette"
